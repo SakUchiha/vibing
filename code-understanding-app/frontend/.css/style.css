@@ -1,0 +1,5 @@
+body { font-family: Arial; margin: 20px; }
+header { background: #222; color: white; padding: 10px; }
+nav a { color: white; margin-right: 15px; text-decoration: none; }
+h1, h2 { color: #009688; }
+button { background: #009688; color: white; border: none; padding: 8px 12px; cursor: pointer; }

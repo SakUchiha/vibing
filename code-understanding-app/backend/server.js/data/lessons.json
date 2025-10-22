@@ -1,0 +1,12 @@
+[
+  {
+    "id": "html-intro",
+    "title": "HTML Introduction",
+    "summary": "Learn the basics of HTML structure.",
+    "content": "<h2>HTML Basics</h2><p>HTML uses tags like &lt;h1&gt; and &lt;p&gt; to structure a webpage.</p>",
+    "exercise": {
+      "description": "Create a page with one heading and one paragraph.",
+      "starter": "<!DOCTYPE html><html><body><h1></h1><p></p></body></html>"
+    }
+  }
+]

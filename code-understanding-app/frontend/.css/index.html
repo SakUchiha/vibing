@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kids Coding App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Welcome to Kids Coding App</h1>
+    
+    <div id="lesson">
+        <h2>Lesson 1: Print Hello</h2>
+        <textarea id="code" placeholder="Type your code here...">console.log('Hello World');</textarea>
+        <button onclick="runCode()">Run Code</button>
+        <pre id="output"></pre>
+    </div>
+
+    <div id="progressForm">
+        <h3>Save your progress</h3>
+        <input type="text" id="name" placeholder="Your Name">
+        <input type="text" id="lessonName" placeholder="Lesson Name">
+        <input type="number" id="score" placeholder="Score">
+        <button onclick="saveProgress()">Save</button>
+        <p id="status"></p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
