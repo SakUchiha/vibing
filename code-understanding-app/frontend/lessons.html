@@ -22,6 +22,9 @@
         <a href="lessons.html" class="nav-link active">
           <i class="fas fa-book"></i> Lessons
         </a>
+        <a href="study-guide.html" class="nav-link">
+          <i class="fas fa-file-lines"></i> Study Guide
+        </a>
         <a href="editor.html" class="nav-link">
           <i class="fas fa-code"></i> Code Editor
         </a>
@@ -132,7 +135,7 @@
     // Load lessons from API
     async function loadLessons() {
       try {
-        const response = await fetch('/api/lessons');
+        const response = await fetch('http://localhost:4000/api/lessons');
         const lessons = await response.json();
         displayLessons(lessons);
         updateProgressStats(lessons);
@@ -224,13 +227,13 @@
     }
 
     // Filter lessons by category
-    function filterLessons(category) {
+    function filterLessons(category, clickedButton) {
       const cards = document.querySelectorAll('.lesson-card');
       const buttons = document.querySelectorAll('.filter-btn');
       
       // Update active button
       buttons.forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
+      if (clickedButton) clickedButton.classList.add('active');
       
       // Show/hide cards
       cards.forEach(card => {
@@ -263,7 +266,7 @@
       
       // Filter buttons
       document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => filterLessons(e.target.getAttribute('data-category')));
+        btn.addEventListener('click', (e) => filterLessons(e.currentTarget.getAttribute('data-category'), e.currentTarget));
       });
     });
   </script>

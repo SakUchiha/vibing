@@ -225,6 +225,37 @@
                 justify-content: center;
             }
         }
+        .viewer-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+        .action-button {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .action-button:hover {
+            background: #667eea;
+            color: white;
+        }
+        @media print {
+            .main-header, .slide-navigation, .viewer-actions, .lesson-viewer { box-shadow: none !important; }
+            body { background: white !important; }
+            .lesson-viewer { padding: 0 !important; background: white !important; }
+            .slide-container { box-shadow: none !important; border-radius: 0 !important; max-width: 100% !important; }
+            .slide-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .nav-button { display: none !important; }
+        }
     </style>
 </head>
 <body>
@@ -258,7 +289,16 @@
                 <div class="slide-counter">
                     <span id="currentSlide">1</span> / <span id="totalSlides">1</span>
                 </div>
-                
+                <div class="viewer-actions">
+                    <button class="action-button" id="printButton" onclick="printSlides()">
+                        <i class="fas fa-print"></i>
+                        Print / Save PDF
+                    </button>
+                    <button class="action-button" id="markCompleteButton" onclick="markLessonComplete()">
+                        <i class="fas fa-check"></i>
+                        Mark Complete
+                    </button>
+                </div>
                 <button class="nav-button" id="nextButton" onclick="nextSlide()">
                     Next
                     <i class="fas fa-arrow-right"></i>
@@ -271,6 +311,7 @@
         let currentLesson = null;
         let currentSlideIndex = 0;
         let slides = [];
+        const COMPLETED_KEY = 'completedLessons';
 
         // Get lesson ID from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
@@ -298,6 +339,7 @@
                 // Display first slide
                 displaySlide(0);
                 updateProgress();
+                updateCompleteButton();
                 
             } catch (error) {
                 console.error('Error loading lesson:', error);
@@ -351,6 +393,53 @@
             document.getElementById('progressFill').style.width = progress + '%';
         }
 
+        function printSlides() {
+            window.print();
+        }
+
+        function getCompletedLessons() {
+            try {
+                const raw = localStorage.getItem(COMPLETED_KEY);
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function setCompletedLessons(list) {
+            localStorage.setItem(COMPLETED_KEY, JSON.stringify(list));
+        }
+
+        function isLessonCompleted(id) {
+            return getCompletedLessons().includes(id);
+        }
+
+        function markLessonComplete() {
+            if (!currentLesson || !currentLesson.id) return;
+            const list = getCompletedLessons();
+            if (!list.includes(currentLesson.id)) {
+                list.push(currentLesson.id);
+                setCompletedLessons(list);
+            }
+            updateCompleteButton();
+        }
+
+        function updateCompleteButton() {
+            const btn = document.getElementById('markCompleteButton');
+            if (!btn || !currentLesson) return;
+            if (isLessonCompleted(currentLesson.id)) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Completed';
+                btn.style.borderColor = '#28a745';
+                btn.style.color = '#28a745';
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check"></i> Mark Complete';
+                btn.style.borderColor = '#667eea';
+                btn.style.color = '#667eea';
+            }
+        }
+
         function showLessonComplete() {
             document.getElementById('slideContent').innerHTML = `
                 <div class="lesson-complete">
@@ -371,6 +460,7 @@
             
             document.getElementById('nextButton').style.display = 'none';
             document.getElementById('prevButton').style.display = 'none';
+            markLessonComplete();
         }
 
         function goToExercise() {

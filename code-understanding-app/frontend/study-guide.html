@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KidLearner - Beginner Study Guide (HTML, CSS, JavaScript)</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    .guide-hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 3rem 0;
+      text-align: center;
+    }
+    .guide-hero h1 { font-size: 2.2rem; margin-bottom: 0.5rem; }
+    .guide-hero p { opacity: 0.9; }
+
+    .slides-wrapper { max-width: 1000px; margin: 2rem auto; padding: 0 20px; }
+    .slide-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+      border: 1px solid #eef0f3;
+    }
+    .slide-head { background: #f8f9fa; padding: 1rem 1.25rem; display: flex; align-items: center; gap: .75rem; }
+    .slide-head .badge { background: #667eea; color: white; border-radius: 999px; padding: .25rem .6rem; font-size: .8rem; font-weight: 700; }
+    .slide-body { padding: 1.5rem; }
+    .slide-body h2 { color: #2c3e50; margin-bottom: .75rem; font-size: 1.5rem; }
+    .slide-body p { color: #555; margin-bottom: .75rem; line-height: 1.7; }
+    .slide-body ul { padding-left: 1.2rem; color: #555; }
+    .code-example { background:#f8f9fa; border:1px solid #e9ecef; border-radius:8px; padding:1rem; margin:1rem 0; font-family:'Courier New', monospace; }
+    .code-example code { display:block; background:#2d3748; color:#e2e8f0; padding:1rem; border-radius:6px; white-space:pre-wrap; }
+
+    .guide-actions { display:flex; gap:.75rem; justify-content:center; margin:2rem 0; }
+    .action-button { background:white; color:#667eea; border:2px solid #667eea; padding:.7rem 1.2rem; border-radius:30px; font-weight:600; cursor:pointer; }
+    .action-button:hover { background:#667eea; color:white; }
+
+    @media print {
+      .main-header, .guide-actions, .guide-hero { display: none !important; }
+      body { background: white !important; }
+      .slide-card { break-inside: avoid; box-shadow: none; border: 1px solid #ddd; }
+    }
+  </style>
+</head>
+<body>
+  <header class="main-header">
+    <div class="container">
+      <div class="logo">
+        <i class="fas fa-code"></i>
+        <h1>KidLearner</h1>
+      </div>
+      <nav class="main-nav">
+        <a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a>
+        <a href="lessons.html" class="nav-link"><i class="fas fa-book"></i> Lessons</a>
+        <a href="editor.html" class="nav-link"><i class="fas fa-code"></i> Code Editor</a>
+        <a href="ai.html" class="nav-link"><i class="fas fa-robot"></i> AI Assistant</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="guide-hero">
+    <div class="container">
+      <h1>Beginner Study Guide</h1>
+      <p>Foundations of HTML, CSS, and JavaScript — printable slides (no video)</p>
+    </div>
+  </section>
+
+  <main class="slides-wrapper">
+    <div class="slide-card">
+      <div class="slide-head"><span class="badge">HTML</span> Getting Started</div>
+      <div class="slide-body">
+        <h2>What is HTML?</h2>
+        <p>HTML structures the content of web pages using elements like headings, paragraphs, lists, images, and links.</p>
+        <ul>
+          <li>Elements are defined with tags like <code>&lt;h1&gt;</code> and <code>&lt;p&gt;</code></li>
+          <li>Attributes add extra info like <code>href</code> on links and <code>src</code> on images</li>
+        </ul>
+        <div class="code-example"><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;My Page&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Hello World&lt;/h1&gt;
+    &lt;p&gt;This is my first web page.&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></div>
+      </div>
+    </div>
+
+    <div class="slide-card">
+      <div class="slide-head"><span class="badge">HTML</span> Links and Images</div>
+      <div class="slide-body">
+        <h2>Make Pages Useful</h2>
+        <p>Use anchors for links and the <code>&lt;img&gt;</code> tag for images. Always include <code>alt</code> text for accessibility.</p>
+        <div class="code-example"><code>&lt;a href="https://example.com"&gt;Visit Example&lt;/a&gt;
+&lt;img src="https://via.placeholder.com/300x200" alt="Sample image"&gt;</code></div>
+      </div>
+    </div>
+
+    <div class="slide-card">
+      <div class="slide-head"><span class="badge">CSS</span> Styling Basics</div>
+      <div class="slide-body">
+        <h2>What is CSS?</h2>
+        <p>CSS controls the look of your page. You write rules with selectors, properties, and values.</p>
+        <div class="code-example"><code>&lt;style&gt;
+  body { font-family: Arial; background: #f5f7fb; }
+  h1 { color: #2c3e50; text-align: center; }
+  .highlight { background: #f39c12; color: white; padding: 4px 8px; }
+&lt;/style&gt;</code></div>
+        <p>Attach styles inline, in the <code>&lt;style&gt;</code> tag, or via external CSS files.</p>
+      </div>
+    </div>
+
+    <div class="slide-card">
+      <div class="slide-head"><span class="badge">CSS</span> Colors and Fonts</div>
+      <div class="slide-body">
+        <h2>Typography and Color</h2>
+        <ul>
+          <li>Colors: names, hex (<code>#ff6b6b</code>), rgb(<code>rgb(255,107,107)</code>)</li>
+          <li>Font properties: <code>font-family</code>, <code>font-size</code>, <code>font-weight</code></li>
+        </ul>
+        <div class="code-example"><code>.title { color: #ff6b6b; font-size: 2rem; font-weight: 700; }</code></div>
+      </div>
+    </div>
+
+    <div class="slide-card">
+      <div class="slide-head"><span class="badge">JS</span> Interactivity</div>
+      <div class="slide-body">
+        <h2>What is JavaScript?</h2>
+        <p>JavaScript adds behavior. You can handle events, change the DOM, and react to user input.</p>
+        <div class="code-example"><code>&lt;button onclick="greet()"&gt;Say Hello&lt;/button&gt;
+&lt;script&gt;
+  function greet(){
+    alert('Hello, JavaScript World!');
+  }
+&lt;/script&gt;</code></div>
+      </div>
+    </div>
+
+    <div class="slide-card">
+      <div class="slide-head"><span class="badge">Practice</span> Mini Challenge</div>
+      <div class="slide-body">
+        <h2>Build a Mini Card</h2>
+        <p>Create a simple profile card with HTML, style it with CSS, and add a JS button that toggles a highlight.</p>
+        <div class="code-example"><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    .card { width: 280px; margin: 20px auto; padding: 16px; border-radius: 10px; background: white; box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+    .name { font-weight: 700; font-size: 1.2rem; color: #2c3e50; }
+    .tag { display:inline-block; margin-top:8px; padding: 4px 8px; border-radius:16px; background:#eef2ff; color:#667eea; font-weight:600; }
+    .highlight { background:#667eea; color:white; }
+    button { margin-top: 12px; background:#ff6b35; color:white; border:none; padding:8px 12px; border-radius:20px; cursor:pointer; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="card"&gt;
+    &lt;div class="name"&gt;Ada Lovelace&lt;/div&gt;
+    &lt;div id="tag" class="tag"&gt;Beginner&lt;/div&gt;
+    &lt;button onclick="toggleTag()"&gt;Toggle Highlight&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;script&gt;
+    function toggleTag(){
+      var el = document.getElementById('tag');
+      el.classList.toggle('highlight');
+    }
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></div>
+      </div>
+    </div>
+
+    <div class="guide-actions">
+      <button class="action-button" onclick="window.print()"><i class="fas fa-print"></i> Print / Save PDF</button>
+      <a class="action-button" href="lessons.html"><i class="fas fa-book"></i> Browse Lessons</a>
+      <a class="action-button" href="editor.html"><i class="fas fa-code"></i> Try in Editor</a>
+    </div>
+  </main>
+
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2025 KidLearner . Made with Software Development for learners.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

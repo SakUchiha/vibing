@@ -5,7 +5,7 @@ document.getElementById('send').onclick = async () => {
   if (!text) return;
   chat.innerHTML += `<p><b>You:</b> ${text}</p>`;
   input.value = '';
-  const res = await fetch('/api/ai', {
+  const res = await fetch('http://localhost:4000/api/ai', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({

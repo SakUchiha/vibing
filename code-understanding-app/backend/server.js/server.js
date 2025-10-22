@@ -21,11 +21,18 @@ app.get('/api/lessons/:id', (req, res) => {
 // AI Assistant Proxy Endpoint
 app.post('/api/ai', async (req, res) => {
   const { messages } = req.body;
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey || apiKey === 'your_openai_api_key_here' || apiKey.toLowerCase() === 'disabled') {
+    return res.status(501).json({
+      error: 'AI assistant is disabled. Set OPENAI_API_KEY on the server to enable.',
+      code: 'AI_DISABLED'
+    });
+  }
   try {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({

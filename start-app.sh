@@ -22,19 +22,28 @@ echo -e "${BLUE}📁 Project Root: $PROJECT_ROOT${NC}"
 echo -e "${BLUE}📁 Backend Directory: $BACKEND_DIR${NC}"
 echo -e "${BLUE}📁 Frontend Directory: $FRONTEND_DIR${NC}"
 
-# Check if .env file exists and has API key
-if [ ! -f "$BACKEND_DIR/.env" ]; then
-    echo -e "${RED}❌ .env file not found!${NC}"
-    echo -e "${YELLOW}Please create a .env file in $BACKEND_DIR with your OpenAI API key:${NC}"
-    echo "OPENAI_API_KEY=your_actual_api_key_here"
-    echo "PORT=4000"
-    exit 1
-fi
+# Find an available frontend port starting at 3000
+is_port_in_use() {
+    lsof -i :$1 -sTCP:LISTEN -t >/dev/null 2>&1
+}
 
-# Check if OpenAI API key is set
-if grep -q "your_openai_api_key_here" "$BACKEND_DIR/.env"; then
-    echo -e "${YELLOW}⚠️  Warning: Please update your OpenAI API key in $BACKEND_DIR/.env${NC}"
-    echo -e "${YELLOW}   The AI Assistant feature will not work without a valid API key.${NC}"
+FRONTEND_PORT=3000
+MAX_PORT=3005
+while is_port_in_use "$FRONTEND_PORT"; do
+    FRONTEND_PORT=$((FRONTEND_PORT + 1))
+    if [ "$FRONTEND_PORT" -gt "$MAX_PORT" ]; then
+        echo -e "${RED}❌ No available ports found between 3000 and $MAX_PORT for the frontend.${NC}"
+        exit 1
+    fi
+done
+
+# .env is optional; warn if missing or placeholder
+if [ ! -f "$BACKEND_DIR/.env" ]; then
+    echo -e "${YELLOW}⚠️  .env not found in $BACKEND_DIR. AI Assistant will be disabled.${NC}"
+else
+    if grep -q "your_openai_api_key_here" "$BACKEND_DIR/.env"; then
+        echo -e "${YELLOW}⚠️  Please update your OpenAI API key in $BACKEND_DIR/.env. AI Assistant will be disabled until then.${NC}"
+    fi
 fi
 
 # Function to cleanup background processes
@@ -77,9 +86,9 @@ cd "$FRONTEND_DIR"
 
 # Try different Python versions
 if command -v python3 &> /dev/null; then
-    python3 -m http.server 3000 &
+    python3 -m http.server "$FRONTEND_PORT" &
 elif command -v python &> /dev/null; then
-    python -m http.server 3000 &
+    python -m http.server "$FRONTEND_PORT" &
 else
     echo -e "${RED}❌ Python not found. Please install Python to serve the frontend.${NC}"
     echo -e "${YELLOW}Alternatively, you can open the frontend files directly in your browser.${NC}"
@@ -96,13 +105,13 @@ echo -e "${GREEN}✅ Frontend server started (PID: $FRONTEND_PID)${NC}"
 
 # Display access information
 echo -e "\n${GREEN}🎉 W3Clone Web Application is now running!${NC}"
-echo -e "${BLUE}📱 Frontend: http://localhost:3000${NC}"
+echo -e "${BLUE}📱 Frontend: http://localhost:$FRONTEND_PORT${NC}"
 echo -e "${BLUE}🔧 Backend API: http://localhost:4000${NC}"
 echo -e "\n${YELLOW}📋 Available Pages:${NC}"
-echo -e "   • Home: http://localhost:3000/index.html"
-echo -e "   • Lessons: http://localhost:3000/lessons.html"
-echo -e "   • Code Editor: http://localhost:3000/editor.html"
-echo -e "   • AI Assistant: http://localhost:3000/ai.html"
+echo -e "   • Home: http://localhost:$FRONTEND_PORT/index.html"
+echo -e "   • Lessons: http://localhost:$FRONTEND_PORT/lessons.html"
+echo -e "   • Code Editor: http://localhost:$FRONTEND_PORT/editor.html"
+echo -e "   • AI Assistant: http://localhost:$FRONTEND_PORT/ai.html"
 echo -e "\n${YELLOW}💡 Press Ctrl+C to stop both servers${NC}"
 
 # Keep the script running and monitor processes
