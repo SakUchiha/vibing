@@ -1,0 +1,311 @@
+[
+  {
+    "id": "html-intro",
+    "title": "HTML Introduction",
+    "category": "HTML",
+    "difficulty": "Beginner",
+    "duration": "15 minutes",
+    "summary": "Learn the basics of HTML structure and tags.",
+    "description": "HTML (HyperText Markup Language) is the foundation of web development. In this lesson, you'll learn about HTML structure, basic tags, and how to create your first webpage.",
+    "slides": [
+      {
+        "id": 1,
+        "title": "What is HTML?",
+        "content": "<h2>What is HTML?</h2><p>HTML (HyperText Markup Language) is the foundation of web development.</p><p>It's the standard markup language for creating web pages.</p>",
+        "type": "content"
+      },
+      {
+        "id": 2,
+        "title": "HTML Structure",
+        "content": "<h2>HTML Structure</h2><p>HTML describes the structure of a web page using markup.</p><div class='code-example'><code>&lt;h1&gt;Hello World&lt;/h1&gt;</code></div>",
+        "type": "content"
+      },
+      {
+        "id": 3,
+        "title": "Key Concepts",
+        "content": "<h2>Key Concepts</h2><ul><li>HTML elements are building blocks</li><li>Tags define content structure</li><li>Attributes provide additional information</li></ul>",
+        "type": "content"
+      },
+      {
+        "id": 4,
+        "title": "Your First HTML Page",
+        "content": "<h2>Your First HTML Page</h2><p>Let's create a simple HTML page together!</p><div class='interactive-demo'>Click 'Next' to start coding!</div>",
+        "type": "interactive"
+      }
+    ],
+    "learningObjectives": [
+      "Understand what HTML is and its purpose",
+      "Learn basic HTML structure",
+      "Create your first HTML page",
+      "Use common HTML tags"
+    ],
+    "exercise": {
+      "description": "Create a simple webpage with a heading, paragraph, and list.",
+      "starter": "<!DOCTYPE html>\n<html>\n<head>\n  <title>My First Webpage</title>\n</head>\n<body>\n  <h1>Welcome to My Website!</h1>\n  <p>This is my first paragraph.</p>\n  <ul>\n    <li>First item</li>\n    <li>Second item</li>\n  </ul>\n</body>\n</html>",
+      "hints": [
+        "Use h1 for main headings",
+        "Use p for paragraphs",
+        "Use ul and li for lists"
+      ]
+    },
+    "nextLesson": "html-structure"
+  },
+  {
+    "id": "html-structure",
+    "title": "HTML Document Structure",
+    "category": "HTML",
+    "difficulty": "Beginner",
+    "duration": "20 minutes",
+    "summary": "Learn about HTML document structure and semantic elements.",
+    "description": "Understanding the proper structure of an HTML document is crucial for creating well-formed web pages.",
+    "slides": [
+      {
+        "id": 1,
+        "title": "HTML Document Structure",
+        "content": "<h2>HTML Document Structure</h2><p>Every HTML document has a specific structure that browsers understand.</p><p>This structure is essential for creating well-formed web pages.</p>",
+        "type": "content"
+      },
+      {
+        "id": 2,
+        "title": "Essential Elements",
+        "content": "<h2>Essential Elements</h2><ul><li>DOCTYPE declaration</li><li>html root element</li><li>head section (metadata)</li><li>body section (visible content)</li></ul>",
+        "type": "content"
+      },
+      {
+        "id": 3,
+        "title": "Document Structure Example",
+        "content": "<h2>Document Structure Example</h2><div class='code-example'><pre><code>&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n  &lt;head&gt;\n    &lt;title&gt;My Page&lt;/title&gt;\n  &lt;/head&gt;\n  &lt;body&gt;\n    &lt;h1&gt;Hello World&lt;/h1&gt;\n  &lt;/body&gt;\n&lt;/html&gt;</code></pre></div>",
+        "type": "code"
+      },
+      {
+        "id": 4,
+        "title": "Semantic Elements",
+        "content": "<h2>Semantic Elements</h2><p>Use semantic elements to give meaning to your content:</p><ul><li>&lt;header&gt; - Page header</li><li>&lt;main&gt; - Main content</li><li>&lt;article&gt; - Article content</li><li>&lt;footer&gt; - Page footer</li></ul>",
+        "type": "content"
+      }
+    ],
+    "learningObjectives": [
+      "Understand HTML document structure",
+      "Learn about DOCTYPE declarations",
+      "Use semantic HTML elements",
+      "Create well-structured documents"
+    ],
+    "exercise": {
+      "description": "Create a properly structured HTML document with semantic elements.",
+      "starter": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Document Structure</title>\n</head>\n<body>\n  <header>\n    <h1>Website Title</h1>\n  </header>\n  <main>\n    <article>\n      <h2>Article Title</h2>\n      <p>Article content goes here.</p>\n    </article>\n  </main>\n  <footer>\n    <p>&copy; 2024 My Website</p>\n  </footer>\n</body>\n</html>",
+      "hints": [
+        "Always include DOCTYPE html",
+        "Use semantic elements like header, main, article, footer",
+        "Include meta tags for character encoding and viewport"
+      ]
+    },
+    "nextLesson": "html-links-images"
+  },
+  {
+    "id": "html-links-images",
+    "title": "Links and Images",
+    "category": "HTML",
+    "difficulty": "Beginner",
+    "duration": "25 minutes",
+    "summary": "Learn how to add links and images to your web pages.",
+    "description": "Links and images are essential for creating engaging web pages. Learn how to add them properly.",
+    "slides": [
+      {
+        "id": 1,
+        "title": "Adding Links and Images",
+        "content": "<h2>Adding Links and Images</h2><p>Links connect pages together, and images make content visually appealing.</p><p>These elements are essential for creating engaging web pages.</p>",
+        "type": "content"
+      },
+      {
+        "id": 2,
+        "title": "Creating Links",
+        "content": "<h2>Creating Links</h2><p>Use the &lt;a&gt; tag to create hyperlinks:</p><div class='code-example'><code>&lt;a href='https://example.com'&gt;Visit Example&lt;/a&gt;</code></div>",
+        "type": "code"
+      },
+      {
+        "id": 3,
+        "title": "Adding Images",
+        "content": "<h2>Adding Images</h2><p>Use the &lt;img&gt; tag to add images:</p><div class='code-example'><code>&lt;img src='image.jpg' alt='Description'&gt;</code></div>",
+        "type": "code"
+      },
+      {
+        "id": 4,
+        "title": "Link Types",
+        "content": "<h2>Link Types</h2><ul><li>External links: href='https://example.com'</li><li>Internal links: href='#section'</li><li>Email links: href='mailto:email@example.com'</li></ul>",
+        "type": "content"
+      }
+    ],
+    "learningObjectives": [
+      "Create hyperlinks between pages",
+      "Add images to web pages",
+      "Use proper alt attributes",
+      "Understand relative vs absolute URLs"
+    ],
+    "exercise": {
+      "description": "Create a webpage with links and images.",
+      "starter": "<!DOCTYPE html>\n<html>\n<head>\n  <title>Links and Images</title>\n</head>\n<body>\n  <h1>My Portfolio</h1>\n  <img src=\"https://via.placeholder.com/300x200\" alt=\"Sample image\">\n  <p>Visit my <a href=\"https://github.com\">GitHub profile</a></p>\n  <p>Check out my <a href=\"#projects\">projects section</a></p>\n  <section id=\"projects\">\n    <h2>My Projects</h2>\n    <p>Here are some of my recent projects.</p>\n  </section>\n</body>\n</html>",
+      "hints": [
+        "Use href attribute for links",
+        "Always include alt attribute for images",
+        "Use # for internal page links"
+      ]
+    },
+    "nextLesson": "css-intro"
+  },
+  {
+    "id": "css-intro",
+    "title": "CSS Introduction",
+    "category": "CSS",
+    "difficulty": "Beginner",
+    "duration": "20 minutes",
+    "summary": "Learn the basics of CSS styling and how to make your pages beautiful.",
+    "description": "CSS (Cascading Style Sheets) controls the visual appearance of your web pages. Learn how to style text, colors, and layouts.",
+    "content": "<h2>What is CSS?</h2><p>CSS is a stylesheet language used to describe the presentation of HTML documents.</p><h3>Key Concepts:</h3><ul><li>Selectors target HTML elements</li><li>Properties define styling rules</li><li>Values specify how properties should look</li></ul>",
+    "learningObjectives": [
+      "Understand what CSS is and its purpose",
+      "Learn CSS syntax and structure",
+      "Apply basic styling to HTML elements",
+      "Use different CSS selectors"
+    ],
+    "exercise": {
+      "description": "Style your HTML page with colors, fonts, and basic layout.",
+      "starter": "<!DOCTYPE html>\n<html>\n<head>\n  <title>CSS Introduction</title>\n  <style>\n    body {\n      font-family: Arial, sans-serif;\n      background-color: #f0f0f0;\n      margin: 0;\n      padding: 20px;\n    }\n    h1 {\n      color: #333;\n      text-align: center;\n    }\n    p {\n      color: #666;\n      line-height: 1.6;\n    }\n  </style>\n</head>\n<body>\n  <h1>Welcome to CSS!</h1>\n  <p>This paragraph is styled with CSS.</p>\n  <p>CSS makes web pages look beautiful!</p>\n</body>\n</html>",
+      "hints": [
+        "Use style tag in head section",
+        "Target elements with selectors",
+        "Use color names or hex codes for colors"
+      ]
+    },
+    "nextLesson": "css-colors-fonts"
+  },
+  {
+    "id": "css-colors-fonts",
+    "title": "Colors and Fonts",
+    "category": "CSS",
+    "difficulty": "Beginner",
+    "duration": "25 minutes",
+    "summary": "Master colors and typography in CSS.",
+    "description": "Learn how to use colors and fonts effectively to create visually appealing web pages.",
+    "content": "<h2>Colors and Typography</h2><p>Colors and fonts are fundamental to good web design.</p><h3>Color Options:</h3><ul><li>Color names (red, blue, green)</li><li>Hex codes (#FF0000)</li><li>RGB values (rgb(255,0,0))</li></ul><h3>Font Properties:</h3><ul><li>font-family for typeface</li><li>font-size for text size</li><li>font-weight for boldness</li></ul>",
+    "learningObjectives": [
+      "Use different color formats in CSS",
+      "Apply various font properties",
+      "Create readable typography",
+      "Understand color theory basics"
+    ],
+    "exercise": {
+      "description": "Create a colorful webpage with different fonts and text styles.",
+      "starter": "<!DOCTYPE html>\n<html>\n<head>\n  <title>Colors and Fonts</title>\n  <style>\n    body {\n      font-family: 'Georgia', serif;\n      background: linear-gradient(45deg, #ff6b6b, #4ecdc4);\n      margin: 0;\n      padding: 20px;\n    }\n    .container {\n      background: white;\n      padding: 30px;\n      border-radius: 10px;\n      box-shadow: 0 4px 6px rgba(0,0,0,0.1);\n    }\n    h1 {\n      color: #2c3e50;\n      font-size: 2.5em;\n      text-align: center;\n    }\n    .highlight {\n      background-color: #f39c12;\n      color: white;\n      padding: 5px 10px;\n      border-radius: 5px;\n    }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <h1>Colorful Typography</h1>\n    <p>This is a <span class=\"highlight\">highlighted text</span> example.</p>\n    <p style=\"color: #e74c3c; font-weight: bold;\">This text is red and bold!</p>\n  </div>\n</body>\n</html>",
+      "hints": [
+        "Use gradient backgrounds for visual appeal",
+        "Combine different font properties",
+        "Use classes for reusable styles"
+      ]
+    },
+    "nextLesson": "css-layout"
+  },
+  {
+    "id": "css-layout",
+    "title": "CSS Layout Basics",
+    "category": "CSS",
+    "difficulty": "Beginner",
+    "duration": "30 minutes",
+    "summary": "Learn CSS layout properties like margin, padding, and positioning.",
+    "description": "Understanding CSS layout is crucial for creating well-structured web pages. Learn about the box model and positioning.",
+    "content": "<h2>CSS Layout and Box Model</h2><p>Every HTML element is a box with content, padding, border, and margin.</p><h3>Box Model Components:</h3><ul><li>Content: The actual content</li><li>Padding: Space inside the element</li><li>Border: Line around the element</li><li>Margin: Space outside the element</li></ul>",
+    "learningObjectives": [
+      "Understand the CSS box model",
+      "Use margin and padding effectively",
+      "Apply different positioning methods",
+      "Create basic page layouts"
+    ],
+    "exercise": {
+      "description": "Create a layout with different sections using CSS positioning and spacing.",
+      "starter": "<!DOCTYPE html>\n<html>\n<head>\n  <title>CSS Layout</title>\n  <style>\n    * {\n      margin: 0;\n      padding: 0;\n      box-sizing: border-box;\n    }\n    body {\n      font-family: Arial, sans-serif;\n    }\n    .header {\n      background: #34495e;\n      color: white;\n      padding: 20px;\n      text-align: center;\n    }\n    .main-content {\n      max-width: 800px;\n      margin: 20px auto;\n      padding: 20px;\n    }\n    .card {\n      background: #ecf0f1;\n      padding: 20px;\n      margin: 20px 0;\n      border-radius: 8px;\n      border-left: 4px solid #3498db;\n    }\n  </style>\n</head>\n<body>\n  <header class=\"header\">\n    <h1>My Website Layout</h1>\n  </header>\n  <main class=\"main-content\">\n    <div class=\"card\">\n      <h2>Card 1</h2>\n      <p>This is the first card with proper spacing.</p>\n    </div>\n    <div class=\"card\">\n      <h2>Card 2</h2>\n      <p>This is the second card with consistent styling.</p>\n    </div>\n  </main>\n</body>\n</html>",
+      "hints": [
+        "Use box-sizing: border-box for easier calculations",
+        "Center content with margin: auto",
+        "Use padding for internal spacing"
+      ]
+    },
+    "nextLesson": "javascript-intro"
+  },
+  {
+    "id": "javascript-intro",
+    "title": "JavaScript Introduction",
+    "category": "JavaScript",
+    "difficulty": "Beginner",
+    "duration": "25 minutes",
+    "summary": "Learn the basics of JavaScript programming and how to make pages interactive.",
+    "description": "JavaScript is the programming language that makes web pages interactive. Learn variables, functions, and basic programming concepts.",
+    "content": "<h2>What is JavaScript?</h2><p>JavaScript is a programming language that adds interactivity to web pages.</p><h3>Key Concepts:</h3><ul><li>Variables store data</li><li>Functions perform actions</li><li>Events respond to user interactions</li></ul>",
+    "learningObjectives": [
+      "Understand what JavaScript is",
+      "Learn about variables and data types",
+      "Write basic JavaScript functions",
+      "Make web pages interactive"
+    ],
+    "exercise": {
+      "description": "Create an interactive webpage with JavaScript that responds to user clicks.",
+      "starter": "<!DOCTYPE html>\n<html>\n<head>\n  <title>JavaScript Introduction</title>\n  <style>\n    body {\n      font-family: Arial, sans-serif;\n      text-align: center;\n      padding: 50px;\n    }\n    button {\n      background: #3498db;\n      color: white;\n      border: none;\n      padding: 15px 30px;\n      font-size: 16px;\n      border-radius: 5px;\n      cursor: pointer;\n      margin: 10px;\n    }\n    button:hover {\n      background: #2980b9;\n    }\n    #output {\n      margin: 20px;\n      font-size: 18px;\n      color: #2c3e50;\n    }\n  </style>\n</head>\n<body>\n  <h1>JavaScript Interactive Demo</h1>\n  <p>Click the buttons to see JavaScript in action!</p>\n  \n  <button onclick=\"sayHello()\">Say Hello</button>\n  <button onclick=\"changeColor()\">Change Color</button>\n  <button onclick=\"showTime()\">Show Time</button>\n  \n  <div id=\"output\">Click a button to see the magic!</div>\n  \n  <script>\n    function sayHello() {\n      document.getElementById('output').innerHTML = 'Hello, JavaScript World!';\n    }\n    \n    function changeColor() {\n      const colors = ['#e74c3c', '#f39c12', '#2ecc71', '#9b59b6'];\n      const randomColor = colors[Math.floor(Math.random() * colors.length)];\n      document.body.style.backgroundColor = randomColor;\n      document.getElementById('output').innerHTML = 'Background color changed!';\n    }\n    \n    function showTime() {\n      const now = new Date();\n      document.getElementById('output').innerHTML = 'Current time: ' + now.toLocaleTimeString();\n    }\n  </script>\n</body>\n</html>",
+      "hints": [
+        "Use onclick attribute for button events",
+        "Access elements with getElementById",
+        "Use innerHTML to change content"
+      ]
+    },
+    "nextLesson": "javascript-variables"
+  },
+  {
+    "id": "javascript-variables",
+    "title": "Variables and Data Types",
+    "category": "JavaScript",
+    "difficulty": "Beginner",
+    "duration": "30 minutes",
+    "summary": "Learn about JavaScript variables and different data types.",
+    "description": "Variables are containers for storing data. Learn about different data types and how to use them effectively.",
+    "content": "<h2>Variables and Data Types</h2><p>Variables store different types of data in JavaScript.</p><h3>Data Types:</h3><ul><li>Numbers: 42, 3.14</li><li>Strings: 'Hello World'</li><li>Booleans: true, false</li><li>Arrays: [1, 2, 3]</li><li>Objects: {name: 'John'}</li></ul>",
+    "learningObjectives": [
+      "Declare variables with let, const, and var",
+      "Understand different data types",
+      "Perform basic operations with variables",
+      "Use variables in functions"
+    ],
+    "exercise": {
+      "description": "Create a calculator that uses variables to perform basic math operations.",
+      "starter": "<!DOCTYPE html>\n<html>\n<head>\n  <title>JavaScript Variables</title>\n  <style>\n    body {\n      font-family: Arial, sans-serif;\n      max-width: 600px;\n      margin: 50px auto;\n      padding: 20px;\n    }\n    .calculator {\n      background: #f8f9fa;\n      padding: 20px;\n      border-radius: 10px;\n      border: 2px solid #dee2e6;\n    }\n    input {\n      width: 100px;\n      padding: 10px;\n      margin: 5px;\n      border: 1px solid #ccc;\n      border-radius: 5px;\n    }\n    button {\n      background: #007bff;\n      color: white;\n      border: none;\n      padding: 10px 20px;\n      margin: 5px;\n      border-radius: 5px;\n      cursor: pointer;\n    }\n    #result {\n      font-size: 18px;\n      font-weight: bold;\n      color: #28a745;\n      margin: 20px 0;\n    }\n  </style>\n</head>\n<body>\n  <h1>JavaScript Calculator</h1>\n  <div class=\"calculator\">\n    <h3>Basic Calculator</h3>\n    <input type=\"number\" id=\"num1\" placeholder=\"First number\">\n    <input type=\"number\" id=\"num2\" placeholder=\"Second number\">\n    <br>\n    <button onclick=\"add()\">Add (+)</button>\n    <button onclick=\"subtract()\">Subtract (-)</button>\n    <button onclick=\"multiply()\">Multiply (×)</button>\n    <button onclick=\"divide()\">Divide (÷)</button>\n    <div id=\"result\">Result will appear here</div>\n  </div>\n  \n  <script>\n    function add() {\n      const num1 = parseFloat(document.getElementById('num1').value);\n      const num2 = parseFloat(document.getElementById('num2').value);\n      const result = num1 + num2;\n      document.getElementById('result').innerHTML = `${num1} + ${num2} = ${result}`;\n    }\n    \n    function subtract() {\n      const num1 = parseFloat(document.getElementById('num1').value);\n      const num2 = parseFloat(document.getElementById('num2').value);\n      const result = num1 - num2;\n      document.getElementById('result').innerHTML = `${num1} - ${num2} = ${result}`;\n    }\n    \n    function multiply() {\n      const num1 = parseFloat(document.getElementById('num1').value);\n      const num2 = parseFloat(document.getElementById('num2').value);\n      const result = num1 * num2;\n      document.getElementById('result').innerHTML = `${num1} × ${num2} = ${result}`;\n    }\n    \n    function divide() {\n      const num1 = parseFloat(document.getElementById('num1').value);\n      const num2 = parseFloat(document.getElementById('num2').value);\n      if (num2 !== 0) {\n        const result = num1 / num2;\n        document.getElementById('result').innerHTML = `${num1} ÷ ${num2} = ${result}`;\n      } else {\n        document.getElementById('result').innerHTML = 'Cannot divide by zero!';\n      }\n    }\n  </script>\n</body>\n</html>",
+      "hints": [
+        "Use parseFloat() to convert strings to numbers",
+        "Store values in variables before using them",
+        "Use template literals for string formatting"
+      ]
+    },
+    "nextLesson": "javascript-functions"
+  },
+  {
+    "id": "javascript-functions",
+    "title": "Functions and Events",
+    "category": "JavaScript",
+    "difficulty": "Beginner",
+    "duration": "35 minutes",
+    "summary": "Learn how to create functions and handle user events.",
+    "description": "Functions are reusable blocks of code, and events make your pages interactive. Learn how to combine them effectively.",
+    "content": "<h2>Functions and Events</h2><p>Functions allow you to organize code into reusable blocks, and events make pages interactive.</p><h3>Function Types:</h3><ul><li>Function declarations</li><li>Function expressions</li><li>Arrow functions</li></ul><h3>Common Events:</h3><ul><li>click - mouse clicks</li><li>keydown - keyboard presses</li><li>load - page loads</li></ul>",
+    "learningObjectives": [
+      "Create and call functions",
+      "Pass parameters to functions",
+      "Handle different types of events",
+      "Create interactive user interfaces"
+    ],
+    "exercise": {
+      "description": "Create an interactive quiz game using functions and events.",
+      "starter": "<!DOCTYPE html>\n<html>\n<head>\n  <title>JavaScript Quiz Game</title>\n  <style>\n    body {\n      font-family: Arial, sans-serif;\n      max-width: 600px;\n      margin: 50px auto;\n      padding: 20px;\n    }\n    .quiz-container {\n      background: #f8f9fa;\n      padding: 30px;\n      border-radius: 10px;\n      border: 2px solid #dee2e6;\n    }\n    .question {\n      font-size: 18px;\n      margin-bottom: 20px;\n      color: #2c3e50;\n    }\n    .options {\n      margin: 20px 0;\n    }\n    .option {\n      display: block;\n      width: 100%;\n      padding: 10px;\n      margin: 10px 0;\n      background: white;\n      border: 2px solid #dee2e6;\n      border-radius: 5px;\n      cursor: pointer;\n      text-align: left;\n    }\n    .option:hover {\n      background: #e9ecef;\n    }\n    .option.selected {\n      background: #007bff;\n      color: white;\n    }\n    .option.correct {\n      background: #28a745;\n      color: white;\n    }\n    .option.incorrect {\n      background: #dc3545;\n      color: white;\n    }\n    button {\n      background: #28a745;\n      color: white;\n      border: none;\n      padding: 15px 30px;\n      font-size: 16px;\n      border-radius: 5px;\n      cursor: pointer;\n      margin: 10px 5px;\n    }\n    button:hover {\n      background: #218838;\n    }\n    button:disabled {\n      background: #6c757d;\n      cursor: not-allowed;\n    }\n    #score {\n      font-size: 18px;\n      font-weight: bold;\n      margin: 20px 0;\n    }\n  </style>\n</head>\n<body>\n  <div class=\"quiz-container\">\n    <h1>JavaScript Quiz Game</h1>\n    <div id=\"question\" class=\"question\">Loading question...</div>\n    <div id=\"options\" class=\"options\"></div>\n    <button id=\"nextBtn\" onclick=\"nextQuestion()\" disabled>Next Question</button>\n    <button id=\"restartBtn\" onclick=\"restartQuiz()\" style=\"display: none;\">Restart Quiz</button>\n    <div id=\"score\"></div>\n  </div>\n  \n  <script>\n    const questions = [\n      {\n        question: \"What does HTML stand for?\",\n        options: [\"HyperText Markup Language\", \"High Tech Modern Language\", \"Home Tool Markup Language\", \"Hyperlink and Text Markup Language\"],\n        correct: 0\n      },\n      {\n        question: \"Which CSS property changes text color?\",\n        options: [\"text-color\", \"color\", \"font-color\", \"text-style\"],\n        correct: 1\n      },\n      {\n        question: \"What is JavaScript primarily used for?\",\n        options: [\"Styling web pages\", \"Creating web page structure\", \"Adding interactivity to web pages\", \"Creating databases\"],\n        correct: 2\n      }\n    ];\n    \n    let currentQuestion = 0;\n    let score = 0;\n    let selectedAnswer = null;\n    \n    function loadQuestion() {\n      const question = questions[currentQuestion];\n      document.getElementById('question').textContent = question.question;\n      \n      const optionsContainer = document.getElementById('options');\n      optionsContainer.innerHTML = '';\n      \n      question.options.forEach((option, index) => {\n        const button = document.createElement('button');\n        button.className = 'option';\n        button.textContent = option;\n        button.onclick = () => selectAnswer(index);\n        optionsContainer.appendChild(button);\n      });\n      \n      document.getElementById('nextBtn').disabled = true;\n      selectedAnswer = null;\n    }\n    \n    function selectAnswer(index) {\n      selectedAnswer = index;\n      const options = document.querySelectorAll('.option');\n      options.forEach((option, i) => {\n        option.classList.remove('selected');\n        if (i === index) {\n          option.classList.add('selected');\n        }\n      });\n      document.getElementById('nextBtn').disabled = false;\n    }\n    \n    function nextQuestion() {\n      if (selectedAnswer === questions[currentQuestion].correct) {\n        score++;\n      }\n      \n      currentQuestion++;\n      \n      if (currentQuestion < questions.length) {\n        loadQuestion();\n      } else {\n        showResults();\n      }\n    }\n    \n    function showResults() {\n      document.getElementById('question').textContent = 'Quiz Complete!';\n      document.getElementById('options').innerHTML = '';\n      document.getElementById('nextBtn').style.display = 'none';\n      document.getElementById('restartBtn').style.display = 'inline-block';\n      document.getElementById('score').innerHTML = `Your Score: ${score}/${questions.length}`;\n    }\n    \n    function restartQuiz() {\n      currentQuestion = 0;\n      score = 0;\n      document.getElementById('nextBtn').style.display = 'inline-block';\n      document.getElementById('restartBtn').style.display = 'none';\n      document.getElementById('score').innerHTML = '';\n      loadQuestion();\n    }\n    \n    // Start the quiz\n    loadQuestion();\n  </script>\n</body>\n</html>",
+      "hints": [
+        "Use arrays to store quiz data",
+        "Create elements dynamically with JavaScript",
+        "Use event listeners for user interactions"
+      ]
+    },
+    "nextLesson": null
+  }
+]
