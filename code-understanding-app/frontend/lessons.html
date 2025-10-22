@@ -1,13 +1,271 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Lessons</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KidLearner - Interactive Coding Lessons</title>
   <link rel="stylesheet" href="css/styles.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-  <h1>Lessons</h1>
-  <ul id="lessonList"></ul>
-  <script src="js/main.js"></script>
+  <!-- Navigation Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="logo">
+        <i class="fas fa-code"></i>
+        <h1>KidLearner</h1>
+      </div>
+      <nav class="main-nav">
+        <a href="index.html" class="nav-link">
+          <i class="fas fa-home"></i> Home
+        </a>
+        <a href="lessons.html" class="nav-link active">
+          <i class="fas fa-book"></i> Lessons
+        </a>
+        <a href="editor.html" class="nav-link">
+          <i class="fas fa-code"></i> Code Editor
+        </a>
+        <a href="ai.html" class="nav-link">
+          <i class="fas fa-robot"></i> AI Assistant
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Lessons Hero Section -->
+  <section class="lessons-hero">
+    <div class="container">
+      <div class="hero-content">
+        <h1>Interactive Coding Lessons</h1>
+        <p>Learn HTML, CSS, and JavaScript through hands-on exercises designed for beginners.</p>
+        <div class="learning-paths">
+          <div class="path-card">
+            <div class="path-icon">
+              <i class="fab fa-html5"></i>
+            </div>
+            <h3>HTML Path</h3>
+            <p>3 lessons • 60 minutes</p>
+            <span class="difficulty beginner">Beginner</span>
+          </div>
+          <div class="path-card">
+            <div class="path-icon">
+              <i class="fab fa-css3-alt"></i>
+            </div>
+            <h3>CSS Path</h3>
+            <p>3 lessons • 75 minutes</p>
+            <span class="difficulty beginner">Beginner</span>
+          </div>
+          <div class="path-card">
+            <div class="path-icon">
+              <i class="fab fa-js-square"></i>
+            </div>
+            <h3>JavaScript Path</h3>
+            <p>3 lessons • 90 minutes</p>
+            <span class="difficulty beginner">Beginner</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lessons Filter Section -->
+  <section class="lessons-filter">
+    <div class="container">
+      <div class="filter-controls">
+        <h2>Choose Your Learning Path</h2>
+        <div class="filter-buttons">
+          <button class="filter-btn active" data-category="all">All Lessons</button>
+          <button class="filter-btn" data-category="HTML">HTML</button>
+          <button class="filter-btn" data-category="CSS">CSS</button>
+          <button class="filter-btn" data-category="JavaScript">JavaScript</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lessons Grid -->
+  <section class="lessons-content">
+    <div class="container">
+      <div id="lessonsGrid" class="lessons-grid">
+        <!-- Lessons will be loaded here dynamically -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Progress Section -->
+  <section class="progress-section">
+    <div class="container">
+      <h2>Your Learning Progress</h2>
+      <div class="progress-stats">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div class="stat-info">
+            <h3 id="completedLessons">0</h3>
+            <p>Lessons Completed</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="stat-info">
+            <h3 id="totalTime">0</h3>
+            <p>Minutes Learned</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-trophy"></i>
+          </div>
+          <div class="stat-info">
+            <h3 id="achievements">0</h3>
+            <p>Achievements</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Load lessons from API
+    async function loadLessons() {
+      try {
+        const response = await fetch('/api/lessons');
+        const lessons = await response.json();
+        displayLessons(lessons);
+        updateProgressStats(lessons);
+      } catch (error) {
+        console.error('Error loading lessons:', error);
+        document.getElementById('lessonsGrid').innerHTML = '<p>Error loading lessons. Please try again.</p>';
+      }
+    }
+
+    // Display lessons in grid
+    function displayLessons(lessons) {
+      const grid = document.getElementById('lessonsGrid');
+      grid.innerHTML = '';
+
+      lessons.forEach(lesson => {
+        const lessonCard = createLessonCard(lesson);
+        grid.appendChild(lessonCard);
+      });
+    }
+
+    // Create lesson card element
+    function createLessonCard(lesson) {
+      const card = document.createElement('div');
+      card.className = 'lesson-card';
+      card.setAttribute('data-category', lesson.category);
+      
+      const difficultyClass = lesson.difficulty.toLowerCase();
+      const categoryIcon = getCategoryIcon(lesson.category);
+      
+      card.innerHTML = `
+        <div class="lesson-header">
+          <div class="lesson-category">
+            <i class="${categoryIcon}"></i>
+            <span>${lesson.category}</span>
+          </div>
+          <div class="lesson-meta">
+            <span class="difficulty ${difficultyClass}">${lesson.difficulty}</span>
+            <span class="duration">
+              <i class="fas fa-clock"></i>
+              ${lesson.duration}
+            </span>
+          </div>
+        </div>
+        
+        <div class="lesson-content">
+          <h3>${lesson.title}</h3>
+          <p class="lesson-summary">${lesson.summary}</p>
+          <div class="lesson-description">
+            <p>${lesson.description}</p>
+          </div>
+          
+          <div class="learning-objectives">
+            <h4>What you'll learn:</h4>
+            <ul>
+              ${lesson.learningObjectives.map(obj => `<li>${obj}</li>`).join('')}
+            </ul>
+          </div>
+        </div>
+        
+        <div class="lesson-footer">
+          <div class="lesson-hints">
+            <i class="fas fa-lightbulb"></i>
+            <span>${lesson.exercise.hints.length} hints available</span>
+          </div>
+          <button class="btn btn-primary start-lesson" onclick="startLesson('${lesson.id}')">
+            <i class="fas fa-play"></i>
+            Start Lesson
+          </button>
+        </div>
+      `;
+      
+      return card;
+    }
+
+    // Get category icon
+    function getCategoryIcon(category) {
+      const icons = {
+        'HTML': 'fab fa-html5',
+        'CSS': 'fab fa-css3-alt',
+        'JavaScript': 'fab fa-js-square'
+      };
+      return icons[category] || 'fas fa-code';
+    }
+
+    // Start lesson
+    function startLesson(lessonId) {
+      localStorage.setItem('lesson', lessonId);
+      window.location.href = `lesson-viewer.html?id=${lessonId}`;
+    }
+
+    // Filter lessons by category
+    function filterLessons(category) {
+      const cards = document.querySelectorAll('.lesson-card');
+      const buttons = document.querySelectorAll('.filter-btn');
+      
+      // Update active button
+      buttons.forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      // Show/hide cards
+      cards.forEach(card => {
+        if (category === 'all' || card.getAttribute('data-category') === category) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Update progress statistics
+    function updateProgressStats(lessons) {
+      const completed = localStorage.getItem('completedLessons') ? 
+        JSON.parse(localStorage.getItem('completedLessons')).length : 0;
+      
+      const totalTime = lessons.reduce((total, lesson) => {
+        const duration = parseInt(lesson.duration);
+        return total + (isNaN(duration) ? 0 : duration);
+      }, 0);
+      
+      document.getElementById('completedLessons').textContent = completed;
+      document.getElementById('totalTime').textContent = totalTime;
+      document.getElementById('achievements').textContent = Math.floor(completed / 3);
+    }
+
+    // Add event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      loadLessons();
+      
+      // Filter buttons
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => filterLessons(e.target.getAttribute('data-category')));
+      });
+    });
+  </script>
 </body>
 </html>

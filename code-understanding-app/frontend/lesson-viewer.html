@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KidLearner - Lesson Viewer</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .lesson-viewer {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem 0;
+        }
+        
+        .slide-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .slide-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .slide-header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .slide-header .lesson-info {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .lesson-info span {
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+        }
+        
+        .slide-content {
+            padding: 3rem;
+            min-height: 500px;
+        }
+        
+        .slide-content h2 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+        
+        .slide-content p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 1.5rem;
+        }
+        
+        .slide-content ul {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #555;
+        }
+        
+        .slide-content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .code-example {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .code-example code {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 6px;
+            display: block;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .interactive-demo {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 2rem 0;
+        }
+        
+        .slide-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 3rem;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .nav-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .nav-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .slide-counter {
+            font-size: 1.1rem;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .lesson-complete {
+            text-align: center;
+            padding: 3rem;
+        }
+        
+        .lesson-complete h2 {
+            color: #28a745;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .lesson-complete p {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        
+        .complete-button {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .complete-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .slide-container {
+                margin: 1rem;
+                border-radius: 15px;
+            }
+            
+            .slide-header h1 {
+                font-size: 2rem;
+            }
+            
+            .slide-content {
+                padding: 2rem;
+            }
+            
+            .slide-navigation {
+                padding: 1.5rem 2rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="lesson-viewer">
+        <div class="slide-container">
+            <div class="slide-header">
+                <h1 id="lessonTitle">Loading Lesson...</h1>
+                <div class="lesson-info">
+                    <span id="lessonCategory">Category</span>
+                    <span id="lessonDifficulty">Difficulty</span>
+                    <span id="lessonDuration">Duration</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+            
+            <div class="slide-content" id="slideContent">
+                <div style="text-align: center; padding: 3rem;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: #667eea;"></i>
+                    <p style="margin-top: 1rem; font-size: 1.2rem; color: #666;">Loading lesson content...</p>
+                </div>
+            </div>
+            
+            <div class="slide-navigation">
+                <button class="nav-button" id="prevButton" onclick="previousSlide()">
+                    <i class="fas fa-arrow-left"></i>
+                    Previous
+                </button>
+                
+                <div class="slide-counter">
+                    <span id="currentSlide">1</span> / <span id="totalSlides">1</span>
+                </div>
+                
+                <button class="nav-button" id="nextButton" onclick="nextSlide()">
+                    Next
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLesson = null;
+        let currentSlideIndex = 0;
+        let slides = [];
+
+        // Get lesson ID from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const lessonId = urlParams.get('id');
+
+        // Load lesson data
+        async function loadLesson() {
+            try {
+                const response = await fetch(`http://localhost:4000/api/lessons/${lessonId}`);
+                if (!response.ok) {
+                    throw new Error('Lesson not found');
+                }
+                currentLesson = await response.json();
+                slides = currentLesson.slides || [];
+                
+                // Update lesson header
+                document.getElementById('lessonTitle').textContent = currentLesson.title;
+                document.getElementById('lessonCategory').textContent = currentLesson.category;
+                document.getElementById('lessonDifficulty').textContent = currentLesson.difficulty;
+                document.getElementById('lessonDuration').textContent = currentLesson.duration;
+                
+                // Update slide counter
+                document.getElementById('totalSlides').textContent = slides.length;
+                
+                // Display first slide
+                displaySlide(0);
+                updateProgress();
+                
+            } catch (error) {
+                console.error('Error loading lesson:', error);
+                document.getElementById('slideContent').innerHTML = `
+                    <div style="text-align: center; padding: 3rem;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #dc3545;"></i>
+                        <h2 style="color: #dc3545; margin-top: 1rem;">Error Loading Lesson</h2>
+                        <p style="color: #666; margin-top: 1rem;">Could not load the lesson. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displaySlide(index) {
+            if (index < 0 || index >= slides.length) return;
+            
+            currentSlideIndex = index;
+            const slide = slides[index];
+            
+            // Update slide content
+            document.getElementById('slideContent').innerHTML = slide.content;
+            
+            // Update slide counter
+            document.getElementById('currentSlide').textContent = index + 1;
+            
+            // Update navigation buttons
+            document.getElementById('prevButton').disabled = index === 0;
+            document.getElementById('nextButton').disabled = index === slides.length - 1;
+            
+            // Update progress
+            updateProgress();
+        }
+
+        function nextSlide() {
+            if (currentSlideIndex < slides.length - 1) {
+                displaySlide(currentSlideIndex + 1);
+            } else {
+                // Show lesson complete
+                showLessonComplete();
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlideIndex > 0) {
+                displaySlide(currentSlideIndex - 1);
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentSlideIndex + 1) / slides.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function showLessonComplete() {
+            document.getElementById('slideContent').innerHTML = `
+                <div class="lesson-complete">
+                    <h2><i class="fas fa-check-circle"></i> Lesson Complete!</h2>
+                    <p>Congratulations! You've completed "${currentLesson.title}"</p>
+                    <p>You've learned about ${currentLesson.category} fundamentals.</p>
+                    <button class="complete-button" onclick="goToExercise()">
+                        <i class="fas fa-code"></i>
+                        Start Exercise
+                    </button>
+                    <br><br>
+                    <button class="complete-button" onclick="goToLessons()" style="background: linear-gradient(135deg, #6c757d, #495057);">
+                        <i class="fas fa-list"></i>
+                        Back to Lessons
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('nextButton').style.display = 'none';
+            document.getElementById('prevButton').style.display = 'none';
+        }
+
+        function goToExercise() {
+            window.location.href = `editor.html?lesson=${lessonId}`;
+        }
+
+        function goToLessons() {
+            window.location.href = 'lessons.html';
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') {
+                previousSlide();
+            } else if (e.key === 'ArrowRight') {
+                nextSlide();
+            }
+        });
+
+        // Load lesson when page loads
+        if (lessonId) {
+            loadLesson();
+        } else {
+            document.getElementById('slideContent').innerHTML = `
+                <div style="text-align: center; padding: 3rem;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #dc3545;"></i>
+                    <h2 style="color: #dc3545; margin-top: 1rem;">No Lesson Selected</h2>
+                    <p style="color: #666; margin-top: 1rem;">Please select a lesson from the lessons page.</p>
+                    <button class="complete-button" onclick="goToLessons()" style="margin-top: 1rem;">
+                        <i class="fas fa-list"></i>
+                        Go to Lessons
+                    </button>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
