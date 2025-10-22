@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# W3Clone Web Application Startup Script
+# KidLearner Web Application Startup Script
 # This script automatically starts both the backend server and serves the frontend
 
-echo "🚀 Starting W3Clone Web Application..."
+echo "🚀 Starting KidLearner Web Application..."
 
 # Colors for output
 RED='\033[0;31m'
@@ -41,7 +41,7 @@ done
 if [ ! -f "$BACKEND_DIR/.env" ]; then
     echo -e "${YELLOW}⚠️  .env not found in $BACKEND_DIR. AI Assistant will be disabled.${NC}"
 else
-    if grep -q "your_openai_api_key_here" "$BACKEND_DIR/.env"; then
+    if grep -qE "your_openai_api_key_here|your_actual_api_key_here" "$BACKEND_DIR/.env"; then
         echo -e "${YELLOW}⚠️  Please update your OpenAI API key in $BACKEND_DIR/.env. AI Assistant will be disabled until then.${NC}"
     fi
 fi
@@ -104,7 +104,7 @@ sleep 2
 echo -e "${GREEN}✅ Frontend server started (PID: $FRONTEND_PID)${NC}"
 
 # Display access information
-echo -e "\n${GREEN}🎉 W3Clone Web Application is now running!${NC}"
+echo -e "\n${GREEN}🎉 KidLearner Web Application is now running!${NC}"
 echo -e "${BLUE}📱 Frontend: http://localhost:$FRONTEND_PORT${NC}"
 echo -e "${BLUE}🔧 Backend API: http://localhost:4000${NC}"
 echo -e "\n${YELLOW}📋 Available Pages:${NC}"

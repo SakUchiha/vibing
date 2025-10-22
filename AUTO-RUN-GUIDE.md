@@ -1,13 +1,13 @@
-# 🚀 Auto-Run Mode - W3Clone Code Editor
+# 🚀 Auto-Run Mode - KidLearner Code Editor
 
 ## ✨ **New Feature: Auto-Run Mode**
 
-Your W3Clone code editor now includes an **Auto-Run Mode** that automatically executes your code as you type!
+Your KidLearner code editor now includes an **Auto-Run Mode** that automatically executes your code as you type!
 
 ## 🎯 **How to Use Auto-Run Mode**
 
 ### **1. Enable Auto-Run**
-- Go to the **Code Editor**: http://localhost:3000/editor.html
+- Go to the **Code Editor**: http://localhost:<frontend_port>/editor.html
 - Click the **"Auto Run: OFF"** button
 - The button will change to **"Auto Run: ON"** (green color)
 - Status indicator will show "Auto-run enabled"

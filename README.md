@@ -1,4 +1,4 @@
-# W3Clone - Code Understanding Web Application
+# KidLearner - Code Understanding Web Application
 
 A web-based learning platform for HTML, CSS, and JavaScript with an integrated AI assistant.
 
@@ -25,14 +25,14 @@ python3 -m http.server 3000
 
 ## 🌐 Access the Application
 
-- **Frontend**: http://localhost:3000
+- **Frontend**: http://localhost:3000 (or the next available port up to 3005 when using the startup script)
 - **Backend API**: http://localhost:4000
 
 ### Available Pages:
-- **Home**: http://localhost:3000/index.html
-- **Lessons**: http://localhost:3000/lessons.html
-- **Code Editor**: http://localhost:3000/editor.html
-- **AI Assistant**: http://localhost:3000/ai.html
+- **Home**: http://localhost:<frontend_port>/index.html
+- **Lessons**: http://localhost:<frontend_port>/lessons.html
+- **Code Editor**: http://localhost:<frontend_port>/editor.html
+- **AI Assistant**: http://localhost:<frontend_port>/ai.html
 
 ## ⚙️ Configuration
 
@@ -43,6 +43,7 @@ python3 -m http.server 3000
    OPENAI_API_KEY=your_actual_api_key_here
    PORT=4000
    ```
+   - If the value is left as `your_actual_api_key_here` or `your_openai_api_key_here`, the AI assistant will be disabled.
 
 ## 🛠️ Features
 
