@@ -1,0 +1,251 @@
+{
+  "categories": {
+    "html": {
+      "name": "HTML Basics",
+      "description": "HTML structure, tags, and elements"
+    },
+    "css": {
+      "name": "CSS Styling", 
+      "description": "CSS properties, selectors, and styling"
+    },
+    "javascript": {
+      "name": "JavaScript Programming",
+      "description": "JavaScript functions, variables, and logic"
+    },
+    "dom": {
+      "name": "DOM Manipulation",
+      "description": "Working with HTML elements using JavaScript"
+    },
+    "responsive": {
+      "name": "Responsive Design",
+      "description": "Making websites work on all devices"
+    },
+    "debugging": {
+      "name": "Debugging Help",
+      "description": "Common errors and how to fix them"
+    }
+  },
+  "questions": [
+    {
+      "id": "html-basic-structure",
+      "question": "How do I create a basic HTML page?",
+      "patterns": ["basic html", "html structure", "html template", "html page", "create html", "html skeleton"],
+      "answer": "A basic HTML page needs these essential elements: DOCTYPE declaration, html tag, head section with title, and body section with content.",
+      "code_example": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>My Page</title>\n</head>\n<body>\n  <h1>Hello World!</h1>\n  <p>Welcome to my website!</p>\n</body>\n</html>",
+      "category": "html",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "html-headings",
+      "question": "What are HTML heading tags?",
+      "patterns": ["heading tags", "h1 h2 h3", "html headings", "headings", "title tags"],
+      "answer": "HTML has 6 heading levels from h1 (most important) to h6 (least important). Use them to structure your content hierarchically.",
+      "code_example": "<h1>Main Title</h1>\n<h2>Section Title</h2>\n<h3>Subsection Title</h3>\n<h4>Minor Heading</h4>\n<h5>Small Heading</h5>\n<h6>Smallest Heading</h6>",
+      "category": "html",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "html-lists",
+      "question": "How do I create lists in HTML?",
+      "patterns": ["html lists", "unordered list", "ordered list", "ul ol li", "create list"],
+      "answer": "HTML has two main list types: unordered lists (ul) for bullet points and ordered lists (ol) for numbered items. Both use li tags for list items.",
+      "code_example": "<!-- Unordered List -->\n<ul>\n  <li>First item</li>\n  <li>Second item</li>\n  <li>Third item</li>\n</ul>\n\n<!-- Ordered List -->\n<ol>\n  <li>First step</li>\n  <li>Second step</li>\n  <li>Third step</li>\n</ol>",
+      "category": "html",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "html-links",
+      "question": "How do I create links in HTML?",
+      "patterns": ["html links", "anchor tag", "href", "create link", "link to page"],
+      "answer": "Use the anchor tag (a) with the href attribute to create links. You can link to other pages, sections, or external websites.",
+      "code_example": "<!-- External link -->\n<a href=\"https://www.example.com\">Visit Example</a>\n\n<!-- Internal link -->\n<a href=\"about.html\">About Us</a>\n\n<!-- Link to section -->\n<a href=\"#contact\">Contact Section</a>\n\n<!-- Email link -->\n<a href=\"mailto:contact@example.com\">Email Us</a>",
+      "category": "html",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "html-images",
+      "question": "How do I add images to HTML?",
+      "patterns": ["html images", "img tag", "add image", "image src", "picture"],
+      "answer": "Use the img tag with src attribute for the image path and alt attribute for accessibility. Always include alt text for screen readers.",
+      "code_example": "<!-- Basic image -->\n<img src=\"image.jpg\" alt=\"Description of image\">\n\n<!-- Image with width and height -->\n<img src=\"photo.png\" alt=\"My photo\" width=\"300\" height=\"200\">\n\n<!-- Responsive image -->\n<img src=\"banner.jpg\" alt=\"Website banner\" style=\"max-width: 100%; height: auto;\">",
+      "category": "html",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "css-basic-syntax",
+      "question": "What is CSS syntax?",
+      "patterns": ["css syntax", "css rules", "css structure", "css selector", "css property"],
+      "answer": "CSS uses selectors to target HTML elements, followed by properties and values in curly braces. Each property-value pair ends with a semicolon.",
+      "code_example": "/* CSS Syntax */\nselector {\n  property: value;\n  property: value;\n}\n\n/* Example */\nh1 {\n  color: blue;\n  font-size: 24px;\n  text-align: center;\n}",
+      "category": "css",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "css-colors",
+      "question": "How do I use colors in CSS?",
+      "patterns": ["css colors", "color property", "background color", "text color", "hex colors"],
+      "answer": "CSS supports multiple color formats: color names, hex codes (#FF0000), RGB values, and HSL values. Use color for text and background-color for backgrounds.",
+      "code_example": "/* Color names */\np {\n  color: red;\n  background-color: yellow;\n}\n\n/* Hex colors */\nh1 {\n  color: #FF5733;\n  background-color: #2E8B57;\n}\n\n/* RGB colors */\ndiv {\n  color: rgb(255, 0, 0);\n  background-color: rgba(0, 255, 0, 0.5);\n}",
+      "category": "css",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "css-fonts",
+      "question": "How do I style fonts in CSS?",
+      "patterns": ["css fonts", "font family", "font size", "font weight", "text styling"],
+      "answer": "Use font-family for typeface, font-size for size, font-weight for boldness, and font-style for italic. Always provide fallback fonts.",
+      "code_example": "p {\n  font-family: Arial, sans-serif;\n  font-size: 16px;\n  font-weight: normal;\n  font-style: italic;\n}\n\n/* Shorthand */\nh1 {\n  font: bold 24px Georgia, serif;\n}",
+      "category": "css",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "css-box-model",
+      "question": "What is the CSS box model?",
+      "patterns": ["css box model", "margin padding", "border", "width height", "box sizing"],
+      "answer": "The box model consists of content, padding, border, and margin. Understanding this helps with layout and spacing.",
+      "code_example": ".box {\n  width: 200px;\n  height: 100px;\n  padding: 20px;\n  border: 2px solid black;\n  margin: 10px;\n  box-sizing: border-box;\n}",
+      "category": "css",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "css-flexbox",
+      "question": "How do I use CSS Flexbox?",
+      "patterns": ["css flexbox", "flex layout", "flex container", "flex items", "flex direction"],
+      "answer": "Flexbox is a layout method for arranging items in a container. Use display: flex on the container and flex properties on items.",
+      "code_example": ".container {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  flex-direction: row;\n}\n\n.item {\n  flex: 1;\n  margin: 10px;\n}",
+      "category": "css",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "javascript-variables",
+      "question": "How do I declare variables in JavaScript?",
+      "patterns": ["javascript variables", "var let const", "declare variable", "variable declaration"],
+      "answer": "Use let for variables that can change, const for constants, and avoid var. Always initialize variables when declaring them.",
+      "code_example": "// Modern JavaScript variable declaration\nlet name = \"John\";\nconst age = 25;\nlet isStudent = true;\n\n// Variables can be reassigned\nname = \"Jane\";\n// age = 26; // Error: const cannot be reassigned",
+      "category": "javascript",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "javascript-functions",
+      "question": "How do I create functions in JavaScript?",
+      "patterns": ["javascript functions", "function declaration", "function expression", "arrow function"],
+      "answer": "Functions can be declared with the function keyword, as expressions, or as arrow functions. They help organize and reuse code.",
+      "code_example": "// Function declaration\nfunction greet(name) {\n  return \"Hello, \" + name + \"!\";\n}\n\n// Function expression\nconst add = function(a, b) {\n  return a + b;\n};\n\n// Arrow function\nconst multiply = (a, b) => a * b;\n\n// Usage\nconsole.log(greet(\"Alice\"));\nconsole.log(add(5, 3));\nconsole.log(multiply(4, 6));",
+      "category": "javascript",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "javascript-arrays",
+      "question": "How do I work with arrays in JavaScript?",
+      "patterns": ["javascript arrays", "array methods", "push pop", "array length", "loop array"],
+      "answer": "Arrays store multiple values. Use methods like push(), pop(), length, and loops to work with array data.",
+      "code_example": "// Create array\nlet fruits = [\"apple\", \"banana\", \"orange\"];\n\n// Add items\nfruits.push(\"grape\");\nfruits.unshift(\"kiwi\");\n\n// Remove items\nfruits.pop();\nfruits.shift();\n\n// Access items\nconsole.log(fruits[0]);\nconsole.log(fruits.length);\n\n// Loop through array\nfruits.forEach(fruit => {\n  console.log(fruit);\n});",
+      "category": "javascript",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "javascript-objects",
+      "question": "How do I create objects in JavaScript?",
+      "patterns": ["javascript objects", "object literal", "object properties", "object methods"],
+      "answer": "Objects store data as key-value pairs. You can access properties with dot notation or bracket notation.",
+      "code_example": "// Object literal\nconst person = {\n  name: \"John\",\n  age: 30,\n  city: \"New York\",\n  greet: function() {\n    return \"Hello, I'm \" + this.name;\n  }\n};\n\n// Access properties\nconsole.log(person.name);\nconsole.log(person[\"age\"]);\nconsole.log(person.greet());\n\n// Add properties\nperson.email = \"john@example.com\";",
+      "category": "javascript",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "dom-get-element",
+      "question": "How do I get HTML elements with JavaScript?",
+      "patterns": ["get element", "querySelector", "getElementById", "dom manipulation", "select element"],
+      "answer": "Use document.getElementById() for single elements, document.querySelector() for CSS selectors, or document.querySelectorAll() for multiple elements.",
+      "code_example": "// Get element by ID\nconst header = document.getElementById('header');\n\n// Get element by CSS selector\nconst button = document.querySelector('.btn');\nconst allButtons = document.querySelectorAll('.btn');\n\n// Get elements by tag name\nconst paragraphs = document.getElementsByTagName('p');\n\n// Get elements by class\nconst items = document.getElementsByClassName('item');",
+      "category": "dom",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "dom-change-content",
+      "question": "How do I change HTML content with JavaScript?",
+      "patterns": ["change content", "innerHTML", "textContent", "modify element", "update text"],
+      "answer": "Use innerHTML for HTML content, textContent for plain text, or innerText for visible text. Be careful with innerHTML for security.",
+      "code_example": "// Get element\nconst element = document.getElementById('myDiv');\n\n// Change text content\nelement.textContent = 'New text content';\n\n// Change HTML content\nelement.innerHTML = '<strong>Bold text</strong>';\n\n// Change inner text (visible text only)\nelement.innerText = 'Visible text only';\n\n// Add content\nelement.innerHTML += '<p>Additional content</p>';",
+      "category": "dom",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "dom-events",
+      "question": "How do I handle events in JavaScript?",
+      "patterns": ["javascript events", "addEventListener", "click event", "event handling", "button click"],
+      "answer": "Use addEventListener() to attach event handlers to elements. Common events include click, mouseover, keydown, and form submit.",
+      "code_example": "// Get button element\nconst button = document.getElementById('myButton');\n\n// Add click event listener\nbutton.addEventListener('click', function() {\n  alert('Button clicked!');\n});\n\n// Arrow function version\nbutton.addEventListener('click', () => {\n  console.log('Button clicked!');\n});\n\n// Event with parameters\nbutton.addEventListener('click', function(event) {\n  console.log('Event:', event);\n  console.log('Target:', event.target);\n});",
+      "category": "dom",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "responsive-media-queries",
+      "question": "How do I make websites responsive?",
+      "patterns": ["responsive design", "media queries", "mobile friendly", "responsive layout", "breakpoints"],
+      "answer": "Use CSS media queries to apply different styles based on screen size. Start with mobile-first design and add larger screen styles.",
+      "code_example": "/* Mobile first approach */\n.container {\n  width: 100%;\n  padding: 10px;\n}\n\n/* Tablet */\n@media (min-width: 768px) {\n  .container {\n    width: 750px;\n    margin: 0 auto;\n    padding: 20px;\n  }\n}\n\n/* Desktop */\n@media (min-width: 1024px) {\n  .container {\n    width: 1200px;\n    padding: 30px;\n  }\n}",
+      "category": "responsive",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "debugging-console",
+      "question": "How do I debug JavaScript code?",
+      "patterns": ["debug javascript", "console.log", "debugging", "find errors", "troubleshoot"],
+      "answer": "Use console.log() to output values, check browser developer tools, and look for error messages in the console.",
+      "code_example": "// Debug with console.log\nlet name = \"John\";\nconsole.log(\"Name:\", name);\n\n// Debug function\nfunction calculate(a, b) {\n  console.log(\"Input:\", a, b);\n  let result = a + b;\n  console.log(\"Result:\", result);\n  return result;\n}\n\n// Debug errors\ntry {\n  // Code that might error\n  let result = undefinedVariable + 5;\n} catch (error) {\n  console.error(\"Error:\", error.message);\n}",
+      "category": "debugging",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "debugging-html-errors",
+      "question": "What are common HTML errors?",
+      "patterns": ["html errors", "html mistakes", "html problems", "fix html", "html debugging"],
+      "answer": "Common HTML errors include unclosed tags, missing quotes around attributes, incorrect nesting, and missing alt attributes on images.",
+      "code_example": "<!-- Common HTML errors to avoid -->\n\n<!-- ❌ Unclosed tag -->\n<p>This is a paragraph\n\n<!-- ✅ Correct -->\n<p>This is a paragraph</p>\n\n<!-- ❌ Missing quotes -->\n<img src=image.jpg alt=My image>\n\n<!-- ✅ Correct -->\n<img src=\"image.jpg\" alt=\"My image\">\n\n<!-- ❌ Incorrect nesting -->\n<p><strong><em>Text</p></strong></em>\n\n<!-- ✅ Correct -->\n<p><strong><em>Text</em></strong></p>",
+      "category": "debugging",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "debugging-css-errors",
+      "question": "What are common CSS errors?",
+      "patterns": ["css errors", "css mistakes", "css problems", "fix css", "css debugging"],
+      "answer": "Common CSS errors include missing semicolons, incorrect property names, missing closing braces, and typos in selectors.",
+      "code_example": "/* Common CSS errors to avoid */\n\n/* ❌ Missing semicolon */\np {\n  color: red\n  font-size: 16px;\n}\n\n/* ✅ Correct */\np {\n  color: red;\n  font-size: 16px;\n}\n\n/* ❌ Incorrect property name */\n.text {\n  font-colour: blue;\n}\n\n/* ✅ Correct */\n.text {\n  color: blue;\n}\n\n/* ❌ Missing closing brace */\n.container {\n  width: 100%;\n  height: 200px;\n\n/* ✅ Correct */\n.container {\n  width: 100%;\n  height: 200px;\n}",
+      "category": "debugging",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "debugging-js-errors",
+      "question": "What are common JavaScript errors?",
+      "patterns": ["javascript errors", "js mistakes", "js problems", "fix javascript", "js debugging"],
+      "answer": "Common JavaScript errors include undefined variables, missing semicolons, incorrect function calls, and type errors.",
+      "code_example": "// Common JavaScript errors to avoid\n\n// ❌ Undefined variable\nconsole.log(undefinedVariable);\n\n// ✅ Correct\nlet myVariable = \"Hello\";\nconsole.log(myVariable);\n\n// ❌ Missing semicolon (can cause issues)\nlet a = 5\nlet b = 10\n\n// ✅ Correct\nlet a = 5;\nlet b = 10;\n\n// ❌ Incorrect function call\nmyFunction(; // Missing closing parenthesis\n\n// ✅ Correct\nmyFunction();",
+      "category": "debugging",
+      "difficulty": "beginner"
+    }
+  ],
+  "code_examples": {
+    "html": [
+      {
+        "title": "Complete HTML Page",
+        "description": "A full HTML page with all essential elements",
+        "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>My Website</title>\n  <link rel=\"stylesheet\" href=\"styles.css\">\n</head>\n<body>\n  <header>\n    <nav>\n      <ul>\n        <li><a href=\"#home\">Home</a></li>\n        <li><a href=\"#about\">About</a></li>\n        <li><a href=\"#contact\">Contact</a></li>\n      </ul>\n    </nav>\n  </header>\n  \n  <main>\n    <section id=\"home\">\n      <h1>Welcome to My Website</h1>\n      <p>This is a sample paragraph.</p>\n    </section>\n  </main>\n  \n  <footer>\n    <p>&copy; 2024 My Website</p>\n  </footer>\n</body>\n</html>"
+      }
+    ],
+    "css": [
+      {
+        "title": "Basic CSS Styling",
+        "description": "Common CSS properties and styling techniques",
+        "code": "/* Reset and base styles */\n* {\n  margin: 0;\n  padding: 0;\n  box-sizing: border-box;\n}\n\nbody {\n  font-family: Arial, sans-serif;\n  line-height: 1.6;\n  color: #333;\n}\n\n/* Header styles */\nheader {\n  background-color: #2c3e50;\n  color: white;\n  padding: 1rem;\n}\n\nnav ul {\n  list-style: none;\n  display: flex;\n  gap: 2rem;\n}\n\nnav a {\n  color: white;\n  text-decoration: none;\n  transition: color 0.3s;\n}\n\nnav a:hover {\n  color: #3498db;\n}\n\n/* Main content */\nmain {\n  max-width: 1200px;\n  margin: 0 auto;\n  padding: 2rem;\n}\n\nh1 {\n  color: #2c3e50;\n  margin-bottom: 1rem;\n}\n\np {\n  margin-bottom: 1rem;\n}\n\n/* Footer */\nfooter {\n  background-color: #34495e;\n  color: white;\n  text-align: center;\n  padding: 1rem;\n  margin-top: 2rem;\n}"
+      }
+    ],
+    "javascript": [
+      {
+        "title": "Interactive JavaScript",
+        "description": "Basic JavaScript with DOM manipulation and events",
+        "code": "// Wait for DOM to load\ndocument.addEventListener('DOMContentLoaded', function() {\n  // Get elements\n  const button = document.getElementById('myButton');\n  const output = document.getElementById('output');\n  \n  // Add event listener\n  button.addEventListener('click', function() {\n    // Get current time\n    const now = new Date();\n    const timeString = now.toLocaleTimeString();\n    \n    // Update output\n    output.textContent = `Button clicked at: ${timeString}`;\n    \n    // Add some styling\n    output.style.backgroundColor = '#e8f5e8';\n    output.style.padding = '10px';\n    output.style.borderRadius = '5px';\n  });\n  \n  // Counter example\n  let count = 0;\n  const counterButton = document.getElementById('counter');\n  const counterDisplay = document.getElementById('counter-display');\n  \n  counterButton.addEventListener('click', function() {\n    count++;\n    counterDisplay.textContent = `Count: ${count}`;\n  });\n});"
+      }
+    ]
+  }
+}

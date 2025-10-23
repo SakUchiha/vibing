@@ -1,4 +1,6 @@
+require('dotenv').config();
 const express = require('express');
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const cors = require('cors');
 const lessons = require('./data/lessons.json');
 const app = express();
@@ -16,41 +18,34 @@ app.get('/api/lessons/:id', (req, res) => {
   res.json(lesson);
 });
 
-// AI Assistant Mock Endpoint (for demo purposes)
+// AI Assistant Proxy Endpoint
 app.post('/api/ai', async (req, res) => {
   const { messages } = req.body;
-  const userMessage = messages[messages.length - 1]?.content || '';
-  
-  // Simple mock responses for common coding questions
-  const responses = {
-    'html': 'HTML is the foundation of web development. It uses tags to structure content on web pages.',
-    'css': 'CSS controls the visual appearance of HTML elements. You can style colors, fonts, layouts, and more.',
-    'javascript': 'JavaScript adds interactivity to web pages. It can respond to user actions and manipulate page content.',
-    'error': 'I can help you debug your code! Try checking for syntax errors, missing semicolons, or typos in variable names.',
-    'help': 'I can help you with HTML, CSS, and JavaScript questions. What would you like to know?'
-  };
-  
-  let response = 'I can help you with web development questions! Try asking about HTML, CSS, or JavaScript.';
-  
-  if (userMessage.toLowerCase().includes('html')) {
-    response = responses.html;
-  } else if (userMessage.toLowerCase().includes('css')) {
-    response = responses.css;
-  } else if (userMessage.toLowerCase().includes('javascript') || userMessage.toLowerCase().includes('js')) {
-    response = responses.javascript;
-  } else if (userMessage.toLowerCase().includes('error') || userMessage.toLowerCase().includes('bug')) {
-    response = responses.error;
-  } else if (userMessage.toLowerCase().includes('help')) {
-    response = responses.help;
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey || apiKey === 'your_openai_api_key_here' || apiKey.toLowerCase() === 'disabled') {
+    return res.status(501).json({
+      error: 'AI assistant is disabled. Set OPENAI_API_KEY on the server to enable.',
+      code: 'AI_DISABLED'
+    });
   }
-  
-  res.json({
-    choices: [{
-      message: {
-        content: response
-      }
-    }]
-  });
+  try {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages,
+        temperature: 0.4
+      })
+    });
+    const data = await response.json();
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Start server

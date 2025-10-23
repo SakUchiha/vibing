@@ -22,17 +22,29 @@ echo -e "${BLUE}📁 Project Root: $PROJECT_ROOT${NC}"
 echo -e "${BLUE}📁 Backend Directory: $BACKEND_DIR${NC}"
 echo -e "${BLUE}📁 Frontend Directory: $FRONTEND_DIR${NC}"
 
-# Find an available frontend port starting at 3000
+# Find available ports for both frontend and backend
 is_port_in_use() {
     lsof -i :$1 -sTCP:LISTEN -t >/dev/null 2>&1
 }
 
+# Find available backend port starting at 4000
+BACKEND_PORT=4000
+MAX_BACKEND_PORT=4005
+while is_port_in_use "$BACKEND_PORT"; do
+    BACKEND_PORT=$((BACKEND_PORT + 1))
+    if [ "$BACKEND_PORT" -gt "$MAX_BACKEND_PORT" ]; then
+        echo -e "${RED}❌ No available ports found between 4000 and $MAX_BACKEND_PORT for the backend.${NC}"
+        exit 1
+    fi
+done
+
+# Find available frontend port starting at 3000
 FRONTEND_PORT=3000
-MAX_PORT=3005
+MAX_FRONTEND_PORT=3005
 while is_port_in_use "$FRONTEND_PORT"; do
     FRONTEND_PORT=$((FRONTEND_PORT + 1))
-    if [ "$FRONTEND_PORT" -gt "$MAX_PORT" ]; then
-        echo -e "${RED}❌ No available ports found between 3000 and $MAX_PORT for the frontend.${NC}"
+    if [ "$FRONTEND_PORT" -gt "$MAX_FRONTEND_PORT" ]; then
+        echo -e "${RED}❌ No available ports found between 3000 and $MAX_FRONTEND_PORT for the frontend.${NC}"
         exit 1
     fi
 done
@@ -64,9 +76,9 @@ cleanup() {
 trap cleanup SIGINT SIGTERM
 
 # Start backend server
-echo -e "${BLUE}🔧 Starting backend server...${NC}"
+echo -e "${BLUE}🔧 Starting backend server on port $BACKEND_PORT...${NC}"
 cd "$BACKEND_DIR"
-npm start &
+PORT=$BACKEND_PORT npm start &
 BACKEND_PID=$!
 
 # Wait a moment for backend to start
@@ -106,7 +118,7 @@ echo -e "${GREEN}✅ Frontend server started (PID: $FRONTEND_PID)${NC}"
 # Display access information
 echo -e "\n${GREEN}🎉 KidLearner Web Application is now running!${NC}"
 echo -e "${BLUE}📱 Frontend: http://localhost:$FRONTEND_PORT${NC}"
-echo -e "${BLUE}🔧 Backend API: http://localhost:4000${NC}"
+echo -e "${BLUE}🔧 Backend API: http://localhost:$BACKEND_PORT${NC}"
 echo -e "\n${YELLOW}📋 Available Pages:${NC}"
 echo -e "   • Home: http://localhost:$FRONTEND_PORT/index.html"
 echo -e "   • Lessons: http://localhost:$FRONTEND_PORT/lessons.html"
