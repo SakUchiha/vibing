@@ -121,6 +121,11 @@ function saveCode() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+
+  // Track file save for progress
+  if (window.progressTracker) {
+    window.progressTracker.incrementFilesSaved();
+  }
 }
 
 // Debounced auto-run function
@@ -169,17 +174,21 @@ const urlParams = new URLSearchParams(window.location.search);
 const lessonId = urlParams.get('lesson') || localStorage.getItem('lesson');
 
 if (lessonId) {
-  fetch(`http://localhost:4000/api/lessons/${lessonId}`)
-    .then(r => r.json())
-    .then(l => {
-      codeEl.value = l.exercise.starter;
+  uiManager.showLoading('code', 'Loading lesson...');
+  apiService.get(`/api/lessons/${lessonId}`)
+    .then(lesson => {
+      uiManager.hideLoading('code');
+      codeEl.value = lesson.exercise.starter;
+      uiManager.showSuccess('Lesson loaded successfully!');
       // Auto-run initial content if enabled
       if (autoRunEnabled) {
         setTimeout(runCode, 100);
       }
     })
     .catch(error => {
+      uiManager.hideLoading('code');
       console.error('Error loading lesson:', error);
+      uiManager.showError(CONFIG.MESSAGES.LESSON_LOAD_ERROR);
       // Load default code if lesson fails to load
       codeEl.value = defaultCode;
     });

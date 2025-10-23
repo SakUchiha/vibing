@@ -3,9 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' http://localhost:4000 http://127.0.0.1:4000 ws://localhost:4000 ws://127.0.0.1:4000;">
   <title>KidLearner - Interactive Code Learning Platform</title>
   <link rel="stylesheet" href="css/styles.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#667eea">
 </head>
 <body>
   <!-- Navigation Header -->
@@ -31,6 +34,9 @@
         <a href="ai.html" class="nav-link">
           <i class="fas fa-robot"></i> AI Assistant
         </a>
+        <button class="theme-toggle" aria-label="Toggle theme" title="Toggle theme">
+          <i class="fas fa-moon"></i>
+        </button>
       </nav>
     </div>
   </header>
@@ -80,7 +86,7 @@
   <!-- Features Section -->
   <section class="features">
     <div class="container">
-      <h2 class="section-title">Why Choose us ?</h2>
+      <h2 class="section-title">Why Choose Us</h2>
       <div class="features-grid">
         <div class="feature-card">
           <div class="feature-icon">
@@ -242,7 +248,29 @@
     </div>
   </footer>
 
+  <script src="js/config.js"></script>
+  <script src="js/error-boundary.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/error-handler.js"></script>
+  <script src="js/progress-tracker.js"></script>
+  <script src="js/theme.js"></script>
   <script>
+    // Register service worker for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(registration => {
+            console.log('Service Worker registered successfully:', registration.scope);
+          })
+          .catch(error => {
+            console.log('Service Worker registration failed:', error);
+          });
+      });
+    }
+
     // Add smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {

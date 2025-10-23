@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' http://localhost:4000 http://127.0.0.1:4000 ws://localhost:4000 ws://127.0.0.1:4000;">
+  <title>Contact Us - KidLearner</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <meta name="theme-color" content="#667eea">
+</head>
+<body class="form-page">
+  <!-- Navigation Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="logo">
+        <i class="fas fa-code"></i>
+        <h1>KidLearner</h1>
+      </div>
+      <nav class="main-nav">
+        <a href="index.html" class="nav-link">
+          <i class="fas fa-home"></i> Home
+        </a>
+        <a href="lessons.html" class="nav-link">
+          <i class="fas fa-book"></i> Lessons
+        </a>
+        <a href="study-guide.html" class="nav-link">
+          <i class="fas fa-file-lines"></i> Study Guide
+        </a>
+        <a href="editor.html" class="nav-link">
+          <i class="fas fa-code"></i> Code Editor
+        </a>
+        <a href="ai.html" class="nav-link">
+          <i class="fas fa-robot"></i> AI Assistant
+        </a>
+        <button class="theme-toggle" aria-label="Toggle theme" title="Toggle theme">
+          <i class="fas fa-moon"></i>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container form-container">
+    <section class="form-hero">
+      <h2>Get in Touch</h2>
+      <p>Have a question or feedback? We’d love to hear from you.</p>
+    </section>
+
+    <section class="form-card">
+      <form id="contactForm" novalidate>
+        <div class="form-row">
+          <div class="form-field">
+            <input type="text" id="name" name="name" required placeholder=" " autocomplete="name">
+            <label for="name">Full Name</label>
+            <span class="field-hint"><i class="fas fa-user"></i></span>
+            <p class="field-error" aria-live="polite"></p>
+          </div>
+          <div class="form-field">
+            <input type="email" id="email" name="email" required placeholder=" " autocomplete="email">
+            <label for="email">Email</label>
+            <span class="field-hint"><i class="fas fa-envelope"></i></span>
+            <p class="field-error" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <input type="text" id="subject" name="subject" required placeholder=" ">
+          <label for="subject">Subject</label>
+          <span class="field-hint"><i class="fas fa-tag"></i></span>
+          <p class="field-error" aria-live="polite"></p>
+        </div>
+
+        <div class="form-field">
+          <textarea id="message" name="message" rows="6" required placeholder=" "></textarea>
+          <label for="message">Message</label>
+          <span class="field-hint"><i class="fas fa-message"></i></span>
+          <p class="field-error" aria-live="polite"></p>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-paper-plane"></i> Send Message
+          </button>
+          <button type="reset" class="btn btn-outline">
+            <i class="fas fa-rotate-right"></i> Reset
+          </button>
+        </div>
+
+        <div id="formStatus" class="form-status" aria-live="polite"></div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2025 KidLearner. We’ll get back to you soon.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/theme.js"></script>
+  <script src="js/form.js"></script>
+</body>
+</html>

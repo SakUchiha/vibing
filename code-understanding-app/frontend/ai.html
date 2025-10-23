@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Assistant - KidLearner</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' http://localhost:4000 http://127.0.0.1:4000 ws://localhost:4000 ws://127.0.0.1:4000;">
+  <title>Ollama AI Assistant - KidLearner</title>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/ai-styles.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="ai-page">
   <!-- Navigation Header -->
   <header class="main-header">
     <div class="container">
@@ -32,6 +33,9 @@
         <a href="ai.html" class="nav-link active">
           <i class="fas fa-robot"></i> AI Assistant
         </a>
+        <button class="theme-toggle" aria-label="Toggle theme" title="Toggle theme">
+          <i class="fas fa-moon"></i>
+        </button>
       </nav>
     </div>
   </header>
@@ -40,8 +44,16 @@
   <div class="ai-container">
     <!-- Header Section -->
     <div class="ai-header">
-      <h1><i class="fas fa-robot"></i> AI Coding Assistant</h1>
-      <p>Get instant help with HTML, CSS, and JavaScript. No external APIs required!</p>
+      <h1><i class="fas fa-robot"></i> Ollama AI Coding Assistant</h1>
+      <p>Get AI-powered help with HTML, CSS, and JavaScript using local Ollama models.</p>
+
+      <!-- AI Provider Info -->
+      <div class="ai-provider-info">
+        <div class="ai-provider-banner">
+          <i class="fas fa-server"></i>
+          <strong>Ollama AI Assistant</strong> - Powered by local AI models
+        </div>
+      </div>
     </div>
 
     <!-- Main Content Grid -->
@@ -54,13 +66,20 @@
         </div>
         <div class="chat-messages" id="chatMessages">
           <!-- Messages will be added here by JavaScript -->
+          <div class="message ai-message">
+            <div class="message-avatar">🤖</div>
+            <div class="message-content">
+              <div class="message-sender">AI Assistant</div>
+              <div class="message-text">👋 Hello! I'm your AI coding assistant. I can help you with HTML, CSS, and JavaScript questions, and I can validate your code. What would you like to learn today?</div>
+            </div>
+          </div>
         </div>
         <div class="chat-input-container">
           <div class="chat-input-wrapper">
             <textarea 
               id="chatInput" 
               class="chat-input" 
-              placeholder="Ask me about HTML, CSS, JavaScript, or request code validation..."
+              placeholder="Ask me about HTML, CSS, JavaScript, or request code validation (requires Ollama running locally)..."
               rows="1"
             ></textarea>
             <button id="sendButton" class="send-button">
@@ -128,30 +147,30 @@ Example:
     </div>
 
     <!-- Quick Help Section -->
-    <div class="quick-help" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 15px;">
-      <h3 style="margin-bottom: 15px; color: #333;">
+    <div class="quick-help">
+      <h3>
         <i class="fas fa-lightbulb"></i> Quick Help
       </h3>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
-        <div style="padding: 15px; background: white; border-radius: 8px; border-left: 4px solid #667eea;">
-          <h4 style="margin: 0 0 8px 0; color: #333;">💬 Ask Questions</h4>
-          <p style="margin: 0; color: #666; font-size: 0.9rem;">
+      <div class="quick-help-grid">
+        <div class="tip-card is-ask">
+          <h4>💬 Ask Questions</h4>
+          <p>
             "How do I create a button?"<br>
             "What's wrong with my CSS?"<br>
             "Show me JavaScript functions"
           </p>
         </div>
-        <div style="padding: 15px; background: white; border-radius: 8px; border-left: 4px solid #28a745;">
-          <h4 style="margin: 0 0 8px 0; color: #333;">🔍 Validate Code</h4>
-          <p style="margin: 0; color: #666; font-size: 0.9rem;">
+        <div class="tip-card is-validate">
+          <h4>🔍 Validate Code</h4>
+          <p>
             Paste your code in the editor<br>
             Click "Validate Code"<br>
             Get instant feedback
           </p>
         </div>
-        <div style="padding: 15px; background: white; border-radius: 8px; border-left: 4px solid #6f42c1;">
-          <h4 style="margin: 0 0 8px 0; color: #333;">📚 Try Examples</h4>
-          <p style="margin: 0; color: #666; font-size: 0.9rem;">
+        <div class="tip-card is-examples">
+          <h4>📚 Try Examples</h4>
+          <p>
             Click any example below<br>
             Modify the code<br>
             Learn by doing
@@ -201,8 +220,18 @@ Example:
   </footer>
 
   <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/error-boundary.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/navigation.js"></script>
   <script src="js/syntax-checker.js"></script>
+  <script src="js/error-handler.js"></script>
+  <script src="js/syntax-highlighter.js"></script>
+  <script src="js/progress-tracker.js"></script>
   <script src="js/ai.js"></script>
+  <script src="js/theme.js"></script>
 
   <!-- Auto-resize textarea -->
   <script>
