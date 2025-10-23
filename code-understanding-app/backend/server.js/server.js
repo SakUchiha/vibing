@@ -41,6 +41,46 @@ app.get('/api/lessons/:id', cacheMiddleware, (req, res) => {
   res.json(lesson);
 });
 
+// Ollama health check endpoint
+app.get('/api/ollama/health', async (req, res) => {
+  try {
+    // Check if Ollama service is running
+    const tagsResponse = await fetch('http://localhost:11434/api/tags');
+    if (!tagsResponse.ok) {
+      throw new Error('Ollama service not running');
+    }
+
+    const tagsData = await tagsResponse.json();
+    const availableModels = tagsData.models?.map(m => m.name) || [];
+
+    // Check for recommended models
+    const recommendedModels = ['gemma3:1b', 'llama3.2:1b', 'llama3.2:3b', 'phi3:3.8b'];
+    const installedRecommended = recommendedModels.filter(model => availableModels.includes(model));
+
+    res.json({
+      status: 'healthy',
+      service: 'running',
+      availableModels: availableModels,
+      recommendedModels: recommendedModels,
+      installedRecommended: installedRecommended,
+      suggestions: installedRecommended.length === 0 ? ['Install a recommended model: ollama pull gemma3:1b'] : []
+    });
+
+  } catch (error) {
+    console.error('Ollama health check failed:', error);
+    res.status(503).json({
+      status: 'unhealthy',
+      service: 'not_running',
+      error: error.message,
+      suggestions: [
+        'Start Ollama: ollama serve',
+        'Install Ollama: https://ollama.ai',
+        'Pull a model: ollama pull gemma3:1b'
+      ]
+    });
+  }
+});
+
 // Input validation middleware
 function validateOllamaRequest(req, res, next) {
   const { messages, model } = req.body;
@@ -76,7 +116,7 @@ function validateOllamaRequest(req, res, next) {
   }
 
   // Validate model
-  if (model && !['gemma3:1b', 'llama2'].includes(model)) {
+  if (model && !['gemma3:1b', 'llama2', 'llama3.2:1b', 'phi3:3.8b'].includes(model)) {
     return res.status(400).json({
       error: 'Invalid model specified',
       code: 'INVALID_MODEL'
@@ -88,53 +128,55 @@ function validateOllamaRequest(req, res, next) {
 
 // Ollama AI Assistant Proxy Endpoint for Web Development Questions
 app.post('/api/ollama', validateOllamaRequest, async (req, res) => {
-  const { messages, model = 'gemma3:1b' } = req.body;
-
-  // Add system prompt for web development focus
-  const systemPrompt = {
-    role: 'system',
-    content: 'You are an expert web development assistant specializing in HTML, CSS, and JavaScript. Provide clear, accurate, and helpful answers about web development topics. Include code examples when relevant. Focus on modern web standards and best practices.'
-  };
-
-  const enhancedMessages = [systemPrompt, ...messages];
+  const { messages, model = 'llama3.2:1b' } = req.body;
 
   try {
-    console.log('Sending request to Ollama API:');
-    console.log('URL: http://localhost:11434/api/chat');
-    console.log('Headers:', {
-      'Content-Type': 'application/json'
-      // Removed Authorization header as Ollama typically doesn't require API keys for local instances
-    });
-    console.log('Body:', JSON.stringify({
-      model: model,
-      messages: enhancedMessages,
-      stream: false
-    }, null, 2));
+    // Check if model is available
+    const modelCheck = await fetch('http://localhost:11434/api/tags');
+    if (!modelCheck.ok) {
+      throw new Error('Ollama service is not running');
+    }
+
+    const modelData = await modelCheck.json();
+    const availableModels = modelData.models?.map(m => m.name) || [];
+    if (!availableModels.includes(model)) {
+      throw new Error(`Model '${model}' is not available. Available models: ${availableModels.join(', ')}`);
+    }
+
+    // Add system prompt for web development focus
+    const systemPrompt = {
+      role: 'system',
+      content: 'You are an expert web development assistant specializing in HTML, CSS, and JavaScript. Provide clear, accurate, and helpful answers about web development topics. Include code examples when relevant. Focus on modern web standards and best practices. Keep responses concise and practical.'
+    };
+
+    const enhancedMessages = [systemPrompt, ...messages];
+
+    console.log(`Sending request to Ollama API with model: ${model}`);
 
     const response = await fetch('http://localhost:11434/api/chat', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
-        // Removed Authorization header as Ollama typically doesn't require API keys for local instances
       },
       body: JSON.stringify({
         model: model,
         messages: enhancedMessages,
-        stream: false
+        stream: false,
+        options: {
+          temperature: 0.7,
+          top_p: 0.9,
+          num_predict: 512  // Limit response length for faster responses
+        }
       })
     });
 
-    console.log('Ollama API response status:', response.status);
-    console.log('Ollama API response headers:', Object.fromEntries(response.headers.entries()));
-
     if (!response.ok) {
       const responseText = await response.text();
-      console.log('Ollama API response body:', responseText);
+      console.log('Ollama API error response:', responseText);
       throw new Error(`Ollama API error: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
-    console.log('Ollama API response data:', JSON.stringify(data, null, 2));
 
     // Format Ollama response to match OpenAI format
     const formattedResponse = {
@@ -145,13 +187,28 @@ app.post('/api/ollama', validateOllamaRequest, async (req, res) => {
       }]
     };
 
-    console.log('Formatted response:', JSON.stringify(formattedResponse, null, 2));
     res.json(formattedResponse);
   } catch (err) {
     console.error('Ollama API error:', err);
+
+    // Enhanced error messages
+    let errorMessage = 'Failed to connect to Ollama AI';
+    let errorCode = 'OLLAMA_CONNECTION_ERROR';
+
+    if (err.message.includes('Ollama service is not running')) {
+      errorMessage = '❌ Ollama is not running. Please start Ollama and ensure it\'s accessible on port 11434.';
+      errorCode = 'OLLAMA_NOT_RUNNING';
+    } else if (err.message.includes('Model') && err.message.includes('not available')) {
+      errorMessage = err.message;
+      errorCode = 'MODEL_NOT_AVAILABLE';
+    } else if (err.message.includes('timeout') || err.message.includes('network')) {
+      errorMessage = '❌ Network error connecting to Ollama. Please check your connection.';
+      errorCode = 'NETWORK_ERROR';
+    }
+
     res.status(500).json({
-      error: `Failed to connect to Ollama: ${err.message}. Make sure Ollama is running locally on port 11434.`,
-      code: 'OLLAMA_CONNECTION_ERROR'
+      error: errorMessage,
+      code: errorCode
     });
   }
 });

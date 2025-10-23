@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' http://localhost:4000 http://127.0.0.1:4000 ws://localhost:4000 ws://127.0.0.1:4000;">
-  <title>Ollama AI Assistant - KidLearner</title>
+  <title>Code Validator - KidLearner</title>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/ai-styles.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -30,8 +30,11 @@
         <a href="editor.html" class="nav-link">
           <i class="fas fa-code"></i> Code Editor
         </a>
-        <a href="ai.html" class="nav-link active">
-          <i class="fas fa-robot"></i> AI Assistant
+        <a href="ask-ai.html" class="nav-link">
+          <i class="fas fa-robot"></i> Ask AI
+        </a>
+        <a href="code-validator.html" class="nav-link active">
+          <i class="fas fa-check-circle"></i> Code Validator
         </a>
         <button class="theme-toggle" aria-label="Toggle theme" title="Toggle theme">
           <i class="fas fa-moon"></i>
@@ -40,88 +43,25 @@
     </div>
   </header>
 
-  <!-- AI Assistant Container -->
+  <!-- Code Validator Container -->
   <div class="ai-container">
     <!-- Header Section -->
     <div class="ai-header">
-      <h1><i class="fas fa-robot"></i> Ollama AI Coding Assistant</h1>
-      <p>Get AI-powered help with HTML, CSS, and JavaScript using local Ollama models.</p>
+      <h1><i class="fas fa-check-circle"></i> AI Code Validator</h1>
+      <p>Get AI-powered code validation and suggestions for HTML, CSS, and JavaScript using local Ollama models.</p>
 
       <!-- AI Provider Info -->
-        <div class="ai-provider-info">
-          <div class="ai-provider-banner">
-            <i class="fas fa-server"></i>
-            <strong>Ollama AI Assistant</strong> - Powered by local AI models
-          </div>
-          <div class="ai-status-container">
-            <div class="ai-status" id="aiStatus">
-              <i class="fas fa-circle-notch fa-spin"></i>
-              Checking AI status...
-            </div>
-            <button class="ai-status-refresh" id="statusRefreshBtn" title="Refresh AI status">
-              <i class="fas fa-sync-alt"></i>
-            </button>
-          </div>
- 
-          <!-- Model Selection -->
-          <div class="model-selection-container">
-            <div class="model-selector">
-              <label for="modelSelect">AI Model:</label>
-              <select id="modelSelect" class="model-select">
-                <option value="gemma3:1b">Gemma 3 1B (Default)</option>
-                <option value="llama3.2:1b">Llama 3.2 1B (Fast)</option>
-                <option value="llama3.2:3b">Llama 3.2 3B (Better)</option>
-                <option value="phi3:3.8b">Phi-3 3.8B (Best)</option>
-              </select>
-            </div>
-            <div class="model-info" id="modelInfo">
-              <i class="fas fa-info-circle"></i>
-              <span>Fast, good quality responses</span>
-            </div>
-          </div>
-        </div>
-    </div>
-
-    <!-- Main Content Grid -->
-    <div class="ai-main">
-      <!-- Chat Interface -->
-      <div class="chat-container">
-        <div class="chat-header">
-          <i class="fas fa-comments"></i>
-          <h3>Ask Me Anything</h3>
-        </div>
-        <div class="chat-messages" id="chatMessages">
-          <!-- Messages will be added here by JavaScript -->
-          <div class="message ai-message">
-            <div class="message-avatar">🤖</div>
-            <div class="message-content">
-              <div class="message-sender">AI Assistant</div>
-              <div class="message-text">👋 Hello! I'm your AI coding assistant. I can help you with HTML, CSS, and JavaScript questions, and I can validate your code. What would you like to learn today?</div>
-            </div>
-          </div>
-        </div>
-        <div class="chat-input-container">
-          <div class="chat-input-wrapper">
-            <textarea 
-              id="chatInput" 
-              class="chat-input" 
-              placeholder="Ask me about HTML, CSS, JavaScript, or request code validation (requires Ollama running locally)..."
-              rows="1"
-            ></textarea>
-            <button id="sendButton" class="send-button">
-              <i class="fas fa-paper-plane"></i>
-              Send
-            </button>
-          </div>
+      <div class="ai-provider-info">
+        <div class="ai-provider-banner">
+          <i class="fas fa-server"></i>
+          <strong>Ollama AI Validator</strong> - Powered by local AI models
         </div>
       </div>
+    </div>
 
-      <!-- Code Validation Panel -->
+    <!-- Code Validation Interface -->
+    <div class="validation-fullscreen">
       <div class="validation-container">
-        <div class="validation-header">
-          <i class="fas fa-check-circle"></i>
-          <h3>Code Validator</h3>
-        </div>
         <div class="code-editor-container">
           <!-- Language Tabs -->
           <div class="language-tabs">
@@ -137,9 +77,9 @@
           </div>
 
           <!-- Code Editor -->
-          <textarea 
-            id="codeEditor" 
-            class="code-editor" 
+          <textarea
+            id="codeEditor"
+            class="code-editor"
             placeholder="Enter your HTML code here...
 
 Example:
@@ -175,23 +115,15 @@ Example:
     <!-- Quick Help Section -->
     <div class="quick-help">
       <h3>
-        <i class="fas fa-lightbulb"></i> Quick Help
+        <i class="fas fa-lightbulb"></i> How to Use
       </h3>
       <div class="quick-help-grid">
-        <div class="tip-card is-ask">
-          <h4>💬 Ask Questions</h4>
-          <p>
-            "How do I create a button?"<br>
-            "What's wrong with my CSS?"<br>
-            "Show me JavaScript functions"
-          </p>
-        </div>
         <div class="tip-card is-validate">
           <h4>🔍 Validate Code</h4>
           <p>
+            Select your language<br>
             Paste your code in the editor<br>
-            Click "Validate Code"<br>
-            Get instant feedback
+            Click "Validate Code"
           </p>
         </div>
         <div class="tip-card is-examples">
@@ -200,6 +132,14 @@ Example:
             Click any example below<br>
             Modify the code<br>
             Learn by doing
+          </p>
+        </div>
+        <div class="tip-card is-validate">
+          <h4>💡 Get Suggestions</h4>
+          <p>
+            Review AI feedback<br>
+            Apply best practices<br>
+            Improve your code
           </p>
         </div>
       </div>
@@ -226,14 +166,14 @@ Example:
           <h4>Tools</h4>
           <ul>
             <li><a href="editor.html">Code Editor</a></li>
-            <li><a href="ai.html">AI Assistant</a></li>
-            <li><a href="editor.html">Auto-Run Mode</a></li>
+            <li><a href="ask-ai.html">Ask AI</a></li>
+            <li><a href="code-validator.html">Code Validator</a></li>
           </ul>
         </div>
         <div class="footer-section">
           <h4>Support</h4>
           <ul>
-            <li><a href="ai.html">Get Help</a></li>
+            <li><a href="ask-ai.html">Get Help</a></li>
             <li><a href="editor.html">Practice</a></li>
             <li><a href="lessons.html">Tutorials</a></li>
           </ul>
@@ -256,26 +196,17 @@ Example:
   <script src="js/error-handler.js"></script>
   <script src="js/syntax-highlighter.js"></script>
   <script src="js/progress-tracker.js"></script>
-  <script src="js/ai.js"></script>
+  <script src="js/ai-validator-only.js"></script>
   <script src="js/theme.js"></script>
 
-  <!-- Auto-resize textarea -->
+  <!-- Auto-resize code editor -->
   <script>
-    // Auto-resize chat input
-    const chatInput = document.getElementById('chatInput');
-    if (chatInput) {
-      chatInput.addEventListener('input', function() {
-        this.style.height = 'auto';
-        this.style.height = Math.min(this.scrollHeight, 100) + 'px';
-      });
-    }
-
     // Auto-resize code editor
     const codeEditor = document.getElementById('codeEditor');
     if (codeEditor) {
       codeEditor.addEventListener('input', function() {
         this.style.height = 'auto';
-        this.style.height = Math.min(this.scrollHeight, 300) + 'px';
+        this.style.height = Math.min(this.scrollHeight, 400) + 'px';
       });
     }
   </script>
