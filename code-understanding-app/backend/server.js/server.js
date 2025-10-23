@@ -1,9 +1,18 @@
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const cors = require('cors');
 const lessons = require('./data/lessons.json');
 const app = express();
+
+// Serve static files from the frontend directory
+app.use(express.static(path.join(__dirname, '../../frontend')));
+
+// Serve index.html for root route
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../frontend/index.html'));
+});
 
 // Simple in-memory cache for API responses
 const responseCache = new Map();
@@ -41,48 +50,44 @@ app.get('/api/lessons/:id', cacheMiddleware, (req, res) => {
   res.json(lesson);
 });
 
-// Ollama health check endpoint
-app.get('/api/ollama/health', async (req, res) => {
+// OpenAI health check endpoint
+app.get('/api/openai/health', async (req, res) => {
   try {
-    // Check if Ollama service is running
-    const tagsResponse = await fetch('http://localhost:11434/api/tags');
-    if (!tagsResponse.ok) {
-      throw new Error('Ollama service not running');
+    // Check if OpenAI API key is configured
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('OpenAI API key not configured');
     }
 
-    const tagsData = await tagsResponse.json();
-    const availableModels = tagsData.models?.map(m => m.name) || [];
-
-    // Check for recommended models
-    const recommendedModels = ['gemma3:1b', 'llama3.2:1b', 'llama3.2:3b', 'phi3:3.8b'];
-    const installedRecommended = recommendedModels.filter(model => availableModels.includes(model));
+    // Simple health check - we can't actually test the API without making a call
+    // but we can verify the key exists and is properly formatted
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey.startsWith('sk-')) {
+      throw new Error('Invalid OpenAI API key format');
+    }
 
     res.json({
       status: 'healthy',
-      service: 'running',
-      availableModels: availableModels,
-      recommendedModels: recommendedModels,
-      installedRecommended: installedRecommended,
-      suggestions: installedRecommended.length === 0 ? ['Install a recommended model: ollama pull gemma3:1b'] : []
+      service: 'configured',
+      provider: 'OpenAI',
+      suggestions: []
     });
 
   } catch (error) {
-    console.error('Ollama health check failed:', error);
+    console.error('OpenAI health check failed:', error.message);
     res.status(503).json({
       status: 'unhealthy',
-      service: 'not_running',
+      service: 'not_configured',
       error: error.message,
       suggestions: [
-        'Start Ollama: ollama serve',
-        'Install Ollama: https://ollama.ai',
-        'Pull a model: ollama pull gemma3:1b'
+        'Configure OpenAI API key in .env file',
+        'Get API key from: https://platform.openai.com/api-keys'
       ]
     });
   }
 });
 
 // Input validation middleware
-function validateOllamaRequest(req, res, next) {
+function validateOpenAIRequest(req, res, next) {
   const { messages, model } = req.body;
 
   // Validate messages array
@@ -116,7 +121,7 @@ function validateOllamaRequest(req, res, next) {
   }
 
   // Validate model
-  if (model && !['gemma3:1b', 'llama2', 'llama3.2:1b', 'phi3:3.8b'].includes(model)) {
+  if (model && !['gpt-3.5-turbo', 'gpt-4', 'gpt-4-turbo-preview'].includes(model)) {
     return res.status(400).json({
       error: 'Invalid model specified',
       code: 'INVALID_MODEL'
@@ -126,21 +131,14 @@ function validateOllamaRequest(req, res, next) {
   next();
 }
 
-// Ollama AI Assistant Proxy Endpoint for Web Development Questions
-app.post('/api/ollama', validateOllamaRequest, async (req, res) => {
-  const { messages, model = 'llama3.2:1b' } = req.body;
+// OpenAI AI Assistant Proxy Endpoint for Web Development Questions
+app.post('/api/openai', validateOpenAIRequest, async (req, res) => {
+  const { messages, model = 'gpt-3.5-turbo' } = req.body;
 
   try {
-    // Check if model is available
-    const modelCheck = await fetch('http://localhost:11434/api/tags');
-    if (!modelCheck.ok) {
-      throw new Error('Ollama service is not running');
-    }
-
-    const modelData = await modelCheck.json();
-    const availableModels = modelData.models?.map(m => m.name) || [];
-    if (!availableModels.includes(model)) {
-      throw new Error(`Model '${model}' is not available. Available models: ${availableModels.join(', ')}`);
+    // Check if OpenAI API key is configured
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('OpenAI API key not configured');
     }
 
     // Add system prompt for web development focus
@@ -151,58 +149,58 @@ app.post('/api/ollama', validateOllamaRequest, async (req, res) => {
 
     const enhancedMessages = [systemPrompt, ...messages];
 
-    console.log(`Sending request to Ollama API with model: ${model}`);
+    console.log(`Sending request to OpenAI API with model: ${model}`);
 
-    const response = await fetch('http://localhost:11434/api/chat', {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: JSON.stringify({
         model: model,
         messages: enhancedMessages,
-        stream: false,
-        options: {
-          temperature: 0.7,
-          top_p: 0.9,
-          num_predict: 512  // Limit response length for faster responses
-        }
+        max_tokens: 1000,
+        temperature: 0.7
       })
     });
 
     if (!response.ok) {
       const responseText = await response.text();
-      console.log('Ollama API error response:', responseText);
-      throw new Error(`Ollama API error: ${response.status} ${response.statusText}`);
+      console.log('OpenAI API error response:', responseText);
+      throw new Error(`OpenAI API error: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
 
-    // Format Ollama response to match OpenAI format
+    // Format OpenAI response
     const formattedResponse = {
       choices: [{
         message: {
-          content: data.message?.content || data.response || 'No response from Ollama'
+          content: data.choices[0]?.message?.content || 'No response from OpenAI'
         }
       }]
     };
 
     res.json(formattedResponse);
   } catch (err) {
-    console.error('Ollama API error:', err);
+    console.error('OpenAI API error:', err);
 
     // Enhanced error messages
-    let errorMessage = 'Failed to connect to Ollama AI';
-    let errorCode = 'OLLAMA_CONNECTION_ERROR';
+    let errorMessage = 'Failed to connect to OpenAI API';
+    let errorCode = 'OPENAI_CONNECTION_ERROR';
 
-    if (err.message.includes('Ollama service is not running')) {
-      errorMessage = '❌ Ollama is not running. Please start Ollama and ensure it\'s accessible on port 11434.';
-      errorCode = 'OLLAMA_NOT_RUNNING';
-    } else if (err.message.includes('Model') && err.message.includes('not available')) {
-      errorMessage = err.message;
-      errorCode = 'MODEL_NOT_AVAILABLE';
+    if (err.message.includes('API key not configured')) {
+      errorMessage = '❌ OpenAI API key not configured. Please check your .env file.';
+      errorCode = 'API_KEY_MISSING';
+    } else if (err.message.includes('401')) {
+      errorMessage = '❌ Invalid OpenAI API key. Please check your API key.';
+      errorCode = 'INVALID_API_KEY';
+    } else if (err.message.includes('429')) {
+      errorMessage = '❌ OpenAI API rate limit exceeded. Please try again later.';
+      errorCode = 'RATE_LIMIT';
     } else if (err.message.includes('timeout') || err.message.includes('network')) {
-      errorMessage = '❌ Network error connecting to Ollama. Please check your connection.';
+      errorMessage = '❌ Network error connecting to OpenAI. Please check your connection.';
       errorCode = 'NETWORK_ERROR';
     }
 
@@ -213,7 +211,7 @@ app.post('/api/ollama', validateOllamaRequest, async (req, res) => {
   }
 });
 
-// Code Validation Endpoint using Ollama AI
+// Code Validation Endpoint using OpenAI
 app.post('/api/validate-code', async (req, res) => {
   const { code, language } = req.body;
 
@@ -285,24 +283,26 @@ Please provide a detailed analysis covering:
 
     const enhancedMessages = [systemPrompt, ...messages];
 
-    console.log(`Sending ${language} code validation request to Ollama API`);
+    console.log(`Sending ${language} code validation request to OpenAI API`);
 
-    const response = await fetch('http://localhost:11434/api/chat', {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: JSON.stringify({
-        model: 'gemma3:1b',
+        model: 'gpt-3.5-turbo',
         messages: enhancedMessages,
-        stream: false
+        max_tokens: 1500,
+        temperature: 0.3
       })
     });
 
     if (!response.ok) {
       const responseText = await response.text();
-      console.log('Ollama API response body:', responseText);
-      throw new Error(`Ollama API error: ${response.status} ${response.statusText}`);
+      console.log('OpenAI API response body:', responseText);
+      throw new Error(`OpenAI API error: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
@@ -320,7 +320,7 @@ Please provide a detailed analysis covering:
   } catch (err) {
     console.error('Code validation error:', err);
     res.status(500).json({
-      error: `Failed to validate code: ${err.message}. Make sure Ollama is running locally on port 11434.`,
+      error: `Failed to validate code: ${err.message}. Make sure OpenAI API key is configured.`,
       code: 'VALIDATION_ERROR'
     });
   }

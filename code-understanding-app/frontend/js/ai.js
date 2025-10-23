@@ -1,6 +1,6 @@
 /**
- * AI Assistant - Ollama-based implementation for web development questions
- * Uses local Ollama AI for HTML, CSS, and JavaScript assistance
+ * AI Assistant - OpenAI-based implementation for web development questions
+ * Uses OpenAI API for HTML, CSS, and JavaScript assistance
  */
 class AIAssistant {
   constructor() {
@@ -19,7 +19,7 @@ class AIAssistant {
     this.statusRefreshBtn = document.getElementById('statusRefreshBtn');
     this.modelSelect = document.getElementById('modelSelect');
     this.modelInfo = document.getElementById('modelInfo');
-    this.selectedModel = 'gemma3:1b';
+    this.selectedModel = 'gpt-3.5-turbo';
 
     this.init();
   }
@@ -73,7 +73,7 @@ class AIAssistant {
   }
 
   addWelcomeMessage() {
-    this.addMessage('ai', '🤖 Hello! I\'m your Ollama AI coding assistant. I can help you with HTML, CSS, and JavaScript questions, and I can validate your code. What would you like to learn today?');
+    this.addMessage('ai', '🤖 Hello! I\'m your OpenAI coding assistant. I can help you with HTML, CSS, and JavaScript questions, and I can validate your code. What would you like to learn today?');
   }
 
   async sendMessage() {
@@ -86,8 +86,8 @@ class AIAssistant {
     // Show typing indicator
     this.showTypingIndicator();
 
-    // Process message with Ollama AI
-    await this.processWithOllama(message);
+    // Process message with OpenAI
+    await this.processWithOpenAI(message);
   }
 
   // Removed client-side AI processing methods
@@ -400,10 +400,9 @@ class AIAssistant {
 
   updateModelInfo() {
     const modelInfos = {
-      'gemma3:1b': 'Fast, good quality responses',
-      'llama3.2:1b': 'Fastest, good for quick answers',
-      'llama3.2:3b': 'Better quality, moderate speed',
-      'phi3:3.8b': 'Best quality, slower responses'
+      'gpt-3.5-turbo': 'Fast, good quality responses',
+      'gpt-4': 'Best quality, slower responses',
+      'gpt-4-turbo-preview': 'Latest model, balanced performance'
     };
 
     if (this.modelInfo) {
@@ -416,33 +415,24 @@ class AIAssistant {
   showModelSuggestion(suggestion) {
     const message = `💡 **Model Suggestion:** ${suggestion}
 
-To get the best AI experience, run this command in your terminal:
-\`\`\`bash
-ollama pull gemma3:1b
-\`\`\`
-
-This will download a fast, high-quality AI model for coding assistance.`;
+To get the best AI experience, make sure your OpenAI API key is properly configured in the backend .env file.`;
 
     this.addMessage('ai', message);
   }
 
   showSetupSuggestion(suggestions) {
-    let message = `🚀 **Setup Required:** AI assistant needs Ollama to work.
+    let message = `🚀 **Setup Required:** AI assistant needs OpenAI API key to work.
 
 **Quick Setup Steps:**
-1. **Download Ollama:** https://ollama.ai/download
-2. **Install and run:** \`ollama serve\`
-3. **Download a model:** \`ollama pull gemma3:1b\`
+1. **Get OpenAI API Key:** https://platform.openai.com/api-keys
+2. **Configure in backend:** Add your API key to the .env file
+3. **Restart the server**
 
-**Why Ollama?**
-• Runs locally on your computer
-• No internet required for responses
-• Privacy-focused (your code stays local)
-• Works offline
-
-**Alternative Models:**
-• \`ollama pull llama3.2:1b\` (fastest)
-• \`ollama pull llama3.2:3b\` (better quality)
+**Why OpenAI?**
+• Powerful GPT models for coding assistance
+• Advanced code understanding and generation
+• Reliable and fast responses
+• Industry-standard AI service
 
 Once setup is complete, refresh this page to start chatting with AI! 🤖`;
 
@@ -457,21 +447,12 @@ Once setup is complete, refresh this page to start chatting with AI! 🤖`;
       this.aiStatus.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Checking AI status...';
       this.aiStatus.className = 'ai-status checking';
 
-      const response = await apiService.get('/api/ollama/health');
+      const response = await apiService.get('/api/openai/health');
 
       if (response.status === 'healthy') {
-        const modelCount = response.availableModels.length;
-        const recommendedCount = response.installedRecommended.length;
-        this.aiStatus.innerHTML = `<i class="fas fa-check-circle"></i> AI Ready (${modelCount} models)`;
+        this.aiStatus.innerHTML = `<i class="fas fa-check-circle"></i> AI Ready (OpenAI)`;
         this.aiStatus.className = 'ai-status healthy';
-        this.aiStatus.title = `Available models: ${response.availableModels.join(', ')}`;
-
-        // Show model download suggestions if no recommended models
-        if (recommendedCount === 0 && response.suggestions.length > 0) {
-          setTimeout(() => {
-            this.showModelSuggestion(response.suggestions[0]);
-          }, 2000);
-        }
+        this.aiStatus.title = `OpenAI API is configured and ready`;
       } else {
         this.aiStatus.innerHTML = '<i class="fas fa-times-circle"></i> AI Unavailable';
         this.aiStatus.className = 'ai-status unhealthy';
@@ -718,11 +699,11 @@ Keep practicing - you'll get the hang of it! 🚀`;
 
   // Removed provider switching functionality
 
-  async processWithOllama(message) {
+  async processWithOpenAI(message) {
     try {
       uiManager.setButtonLoading('sendButton', true, 'Thinking...');
 
-      const response = await apiService.post('/api/ollama', {
+      const response = await apiService.post('/api/openai', {
         messages: [{role: 'user', content: message}],
         model: this.selectedModel
       });
@@ -747,69 +728,76 @@ Keep practicing - you'll get the hang of it! 🚀`;
       let userMessage = CONFIG.MESSAGES.AI_UNAVAILABLE;
       let suggestions = [];
 
-      if (error.message.includes('Ollama service is not running') || error.message.includes('11434')) {
-        userMessage = `❌ Ollama AI is not available. Here's how to fix it:
+      if (error.message.includes('API key not configured')) {
+        userMessage = `❌ OpenAI API key is not configured. Here's how to fix it:
 
 **Quick Setup:**
-1. Download Ollama: https://ollama.ai/download
-2. Install and run: \`ollama serve\`
-3. Pull a model: \`ollama pull gemma3:1b\`
+1. Get OpenAI API key: https://platform.openai.com/api-keys
+2. Add to backend .env file: OPENAI_API_KEY=your_key_here
+3. Restart the KidLearner server
 4. Refresh this page
-
-**Alternative Models:**
-• \`ollama pull llama3.2:1b\` (fast)
-• \`ollama pull llama3.2:3b\` (better quality)
 
 **Need Help?** Check the README.md for detailed setup instructions.`;
         suggestions = [
-          'Download Ollama from https://ollama.ai',
-          'Run: ollama serve',
-          'Run: ollama pull gemma3:1b',
+          'Get API key from https://platform.openai.com/api-keys',
+          'Add to .env file',
+          'Restart server',
           'Refresh this page'
         ];
-      } else if (error.message.includes('Model') && error.message.includes('not available')) {
-        const availableModels = error.message.match(/Available models: (.+)/)?.[1] || '';
-        userMessage = `❌ The requested AI model is not available.
-
-**Available models:** ${availableModels || 'none found'}
-
-**Recommended actions:**
-• Pull gemma3:1b: \`ollama pull gemma3:1b\`
-• Pull llama3.2:1b: \`ollama pull llama3.2:1b\`
-• Check installed models: \`ollama list\`
-
-**Why this matters:** Different models offer different speeds and capabilities.`;
-        suggestions = [
-          'Run: ollama pull gemma3:1b',
-          'Run: ollama pull llama3.2:1b',
-          'Check: ollama list'
-        ];
-      } else if (error.message.includes('timeout') || error.message.includes('network')) {
-        userMessage = `❌ Network error connecting to Ollama.
+      } else if (error.message.includes('401') || error.message.includes('Invalid API key')) {
+        userMessage = `❌ Invalid OpenAI API key.
 
 **Troubleshooting:**
-• Ensure Ollama is running: \`ollama serve\`
-• Check port 11434 is not blocked
-• Try restarting Ollama service
-• Check firewall settings
+• Check your API key is correct
+• Make sure it starts with 'sk-'
+• Verify you have credits/quota
+• Try regenerating the key
 
-**Status check:** Visit http://localhost:11434/api/tags in your browser.`;
+**Status check:** Check your OpenAI dashboard for key validity.`;
         suggestions = [
-          'Check if Ollama is running',
-          'Verify port 11434 is accessible',
-          'Restart Ollama service'
+          'Verify API key format',
+          'Check OpenAI dashboard',
+          'Regenerate key if needed'
+        ];
+      } else if (error.message.includes('429') || error.message.includes('rate limit')) {
+        userMessage = `❌ OpenAI API rate limit exceeded.
+
+**What this means:**
+• You've made too many requests
+• Wait a few minutes before trying again
+• Consider upgrading your OpenAI plan
+
+**Rate limits vary by model and plan.**`;
+        suggestions = [
+          'Wait a few minutes',
+          'Check your OpenAI usage',
+          'Consider upgrading plan'
+        ];
+      } else if (error.message.includes('timeout') || error.message.includes('network')) {
+        userMessage = `❌ Network error connecting to OpenAI.
+
+**Troubleshooting:**
+• Check your internet connection
+• Try again in a few moments
+• OpenAI services might be temporarily unavailable
+
+**Status check:** Visit https://status.openai.com`;
+        suggestions = [
+          'Check internet connection',
+          'Wait and try again',
+          'Check OpenAI status page'
         ];
       } else {
         userMessage = `❌ AI Assistant Error: ${error.message}
 
 **General troubleshooting:**
 • Restart the KidLearner server
-• Check Ollama is running on port 11434
+• Check OpenAI API key configuration
 • Try refreshing the page
 • Check browser console for details`;
         suggestions = [
           'Restart KidLearner server',
-          'Check Ollama status',
+          'Verify API key',
           'Refresh the page'
         ];
       }
@@ -822,7 +810,7 @@ Keep practicing - you'll get the hang of it! 🚀`;
       }
 
       this.addMessage('ai', userMessage);
-      uiManager.showError(userMessage, () => this.processWithOllama(message));
+      uiManager.showError(userMessage, () => this.processWithOpenAI(message));
     }
   }
 }

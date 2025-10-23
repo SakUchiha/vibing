@@ -136,12 +136,6 @@ class NavigationManager {
         navLinks.appendChild(clone);
       });
 
-      // Add theme toggle
-      const themeToggle = originalNav.querySelector('.theme-toggle');
-      if (themeToggle) {
-        const themeClone = themeToggle.cloneNode(true);
-        navLinks.appendChild(themeClone);
-      }
     }
 
     mobileNav.appendChild(navLinks);
@@ -153,11 +147,6 @@ class NavigationManager {
       link.addEventListener('click', () => this.closeMobileMenu());
     });
 
-    // Add event listener to cloned theme toggle
-    const clonedThemeToggle = navLinks.querySelector('.theme-toggle');
-    if (clonedThemeToggle) {
-      clonedThemeToggle.addEventListener('click', () => this.closeMobileMenu());
-    }
 
     this.openMobileMenu();
   }
