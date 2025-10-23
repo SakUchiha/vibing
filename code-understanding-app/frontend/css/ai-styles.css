@@ -1029,16 +1029,16 @@
 
 /* Background for AI page */
 .ai-page {
-  background: radial-gradient(1200px 600px at 10% -10%, rgba(99,102,241,0.10), transparent),
-              radial-gradient(800px 400px at 110% 10%, rgba(124,58,237,0.10), transparent),
-              linear-gradient(180deg, #f9fbff 0%, #f6f7ff 100%);
+  background: radial-gradient(1200px 600px at 10% -10%, rgba(33,150,243,0.15), transparent),
+              radial-gradient(800px 400px at 110% 10%, rgba(25,118,210,0.15), transparent),
+              linear-gradient(180deg, #e3f2fd 0%, #bbdefb 100%);
 }
 
 @media (prefers-color-scheme: dark) {
   .ai-page {
-    background: radial-gradient(1200px 600px at 10% -10%, rgba(99,102,241,0.12), transparent),
-                radial-gradient(800px 400px at 110% 10%, rgba(124,58,237,0.12), transparent),
-                linear-gradient(180deg, #0b1220 0%, #0e1530 100%);
+    background: radial-gradient(1200px 600px at 10% -10%, rgba(33,150,243,0.18), transparent),
+                radial-gradient(800px 400px at 110% 10%, rgba(25,118,210,0.18), transparent),
+                linear-gradient(180deg, #0d47a1 0%, #1565c0 100%);
   }
 
   .chat-container,
