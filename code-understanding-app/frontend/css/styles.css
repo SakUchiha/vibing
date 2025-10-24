@@ -1583,11 +1583,6 @@ section {
   }
 }
 
-<<<<<<< HEAD
-/* Dark mode media query removed */
-=======
->>>>>>> 4cf4bf224f8b7bd973fcaacd7d992cc5f4736a85
-
 .stat-icon {
   width: 60px;
   height: 60px;
@@ -1612,49 +1607,76 @@ section {
   margin: 0;
 }
 
-/* Responsive Design for Lessons */
-@media (max-width: 768px) {
-  .lessons-hero h1 {
-    font-size: 2rem;
-  }
-  
-  .learning-paths {
-    grid-template-columns: 1fr;
-  }
-  
-  .lessons-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .lesson-header {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: flex-start;
-  }
-  
-  .lesson-footer {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: stretch;
-  }
-  
-  .start-lesson {
-    width: 100%;
-  }
-  
-  .filter-buttons {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .filter-btn {
-    width: 200px;
-  }
-  
-  .stat-card {
-    flex-direction: column;
-    text-align: center;
-  }
+/* Editor Controls */
+.controls {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 10px;
+  margin: 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.auto-run-btn {
+  background: #ff6b35;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.auto-run-btn:hover {
+  background: #e55a2b;
+  transform: translateY(-1px);
+}
+
+.auto-run-btn.active {
+  background: #4caf50;
+}
+
+.auto-run-btn.active:hover {
+  background: #45a049;
+}
+
+.status-indicator {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  background: #e9ecef;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.status-indicator.running {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-indicator.error {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.control-group i {
+  color: #6c757d;
+  font-size: 1rem;
+}
+
+.control-group span {
+  color: #6c757d;
+  font-size: 0.9rem;
 }
 
 /* --- Additional Visual Enhancements (Homepage + Lessons) --- */
@@ -1723,3 +1745,28 @@ section {
 
 /* Make steps numbers a bit more vibrant */
 .step-number { box-shadow: 0 10px 20px rgba(102, 126, 234, 0.35); }
+
+/* Responsive Design for Editor */
+@media (max-width: 768px) {
+  .editor-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .action-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 1rem 1.5rem;
+  }
+
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .control-group {
+    justify-content: center;
+  }
+}

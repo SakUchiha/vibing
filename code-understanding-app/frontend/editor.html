@@ -77,10 +77,10 @@
     }
     
     .editor-actions {
-      display: flex;
+      display: flex !important;
       gap: 1rem;
       margin: 3rem 0 1rem 0;
-      padding-top: 2rem;
+      padding: 1rem 0;
       position: relative;
       z-index: 10;
     }
@@ -94,22 +94,28 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 0.5rem;
+      font-size: 1rem;
+      min-height: 45px;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
     }
     
     .action-btn:hover {
       background: #5a67d8;
       transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
     }
     
     .action-btn.secondary {
       background: #6c757d;
+      box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
     }
     
     .action-btn.secondary:hover {
       background: #5a6268;
+      box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
     }
     
     @media (max-width: 768px) {
@@ -129,6 +135,18 @@
       
       .control-group {
         justify-content: center;
+      }
+      
+      .editor-actions {
+        flex-direction: column !important;
+        align-items: stretch;
+        gap: 0.75rem;
+      }
+      
+      .action-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 1rem 1.5rem;
       }
     }
   </style>
@@ -207,6 +225,70 @@
     </div>
   </div>
 
+  <script>
+    // Ensure buttons are visible and working
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Editor page loaded');
+
+      // Make sure buttons are visible
+      const runBtn = document.getElementById('run');
+      const clearBtn = document.getElementById('clear');
+      const saveBtn = document.getElementById('save');
+      const autoRunBtn = document.getElementById('autoRunToggle');
+
+      if (runBtn) {
+        console.log('Run button found');
+        runBtn.style.display = 'inline-flex';
+      }
+      if (clearBtn) {
+        console.log('Clear button found');
+        clearBtn.style.display = 'inline-flex';
+      }
+      if (saveBtn) {
+        console.log('Save button found');
+        saveBtn.style.display = 'inline-flex';
+      }
+      if (autoRunBtn) {
+        console.log('Auto-run button found');
+        autoRunBtn.style.display = 'inline-flex';
+      }
+
+      // Simple button functionality as fallback
+      if (runBtn && !runBtn.onclick) {
+        runBtn.onclick = function() {
+          const code = document.getElementById('code').value;
+          const output = document.getElementById('output');
+          if (output && code) {
+            output.srcdoc = code;
+            console.log('Code executed');
+          }
+        };
+      }
+
+      if (clearBtn && !clearBtn.onclick) {
+        clearBtn.onclick = function() {
+          if (confirm('Clear all code?')) {
+            document.getElementById('code').value = '';
+            document.getElementById('output').srcdoc = '';
+            console.log('Code cleared');
+          }
+        };
+      }
+
+      if (saveBtn && !saveBtn.onclick) {
+        saveBtn.onclick = function() {
+          const code = document.getElementById('code').value;
+          const blob = new Blob([code], { type: 'text/html' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'my-code.html';
+          a.click();
+          URL.revokeObjectURL(url);
+          console.log('Code saved');
+        };
+      }
+    });
   <script src="js/config.js"></script>
   <script src="js/error-boundary.js"></script>
   <script src="js/api.js"></script>

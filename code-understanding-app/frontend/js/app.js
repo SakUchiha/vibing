@@ -33,7 +33,7 @@ class KidLearnerApp {
       console.log('KidLearner application initialized successfully');
 
       // Show welcome message
-      uiManager.showSuccess('Application loaded successfully!');
+      // uiManager.showSuccess('Application loaded successfully!');
 
     } catch (error) {
       console.error('Failed to initialize application:', error);
