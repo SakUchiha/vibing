@@ -28,14 +28,9 @@
   --surface: #eef2ff;
 }
 
-<<<<<<< HEAD
 /* Theme classes removed - using default light theme only */
 
-body { 
-=======
-
 body {
->>>>>>> 4cf4bf224f8b7bd973fcaacd7d992cc5f4736a85
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   line-height: 1.7;
   color: var(--text);
@@ -101,12 +96,6 @@ body {
   justify-content: space-between;
   align-items: center;
 }
-
-<<<<<<< HEAD
-/* Theme toggle button removed */
-=======
->>>>>>> 4cf4bf224f8b7bd973fcaacd7d992cc5f4736a85
-
 .logo {
   display: flex;
   align-items: center;
@@ -1047,11 +1036,7 @@ section {
   transform: translateX(5px);
 }
 
-<<<<<<< HEAD
 /* Mobile menu theme styles removed */
-=======
-
->>>>>>> 4cf4bf224f8b7bd973fcaacd7d992cc5f4736a85
 
 /* Responsive Design */
 @media (max-width: 1024px) {

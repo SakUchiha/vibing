@@ -135,11 +135,7 @@ class NavigationManager {
         const clone = link.cloneNode(true);
         navLinks.appendChild(clone);
       });
-
-<<<<<<< HEAD
       // Theme toggle removed
-=======
->>>>>>> 4cf4bf224f8b7bd973fcaacd7d992cc5f4736a85
     }
 
     mobileNav.appendChild(navLinks);
@@ -150,11 +146,7 @@ class NavigationManager {
     clonedLinks.forEach(link => {
       link.addEventListener('click', () => this.closeMobileMenu());
     });
-
-<<<<<<< HEAD
     // Theme toggle removed
-=======
->>>>>>> 4cf4bf224f8b7bd973fcaacd7d992cc5f4736a85
 
     this.openMobileMenu();
   }

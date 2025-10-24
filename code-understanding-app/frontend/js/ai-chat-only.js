@@ -36,11 +36,7 @@ class AIChatOnly {
     // Show typing indicator
     this.showTypingIndicator();
 
-<<<<<<< HEAD
     // Process message with OpenAI via OpenRouter
-=======
-    // Process message with OpenAI (fallback from Ollama)
->>>>>>> 4cf4bf224f8b7bd973fcaacd7d992cc5f4736a85
     await this.processWithOpenAI(message);
   }
 
@@ -115,12 +111,8 @@ class AIChatOnly {
       uiManager.setButtonLoading('sendButton', true, 'Thinking...');
 
       const response = await apiService.post('/api/openai', {
-        messages: [{role: 'user', content: message}],
-<<<<<<< HEAD
-        model: 'openai/gpt-4o' // Upgraded to GPT-4o for better performance
-=======
-        model: 'gpt-3.5-turbo' // Default model, can be configured
->>>>>>> 4cf4bf224f8b7bd973fcaacd7d992cc5f4736a85
+        messages: [{ role: 'user', content: message }],
+        model: 'gpt-4o-mini'
       });
 
       uiManager.setButtonLoading('sendButton', false);
@@ -137,22 +129,13 @@ class AIChatOnly {
     } catch (error) {
       uiManager.setButtonLoading('sendButton', false);
       this.hideTypingIndicator();
-<<<<<<< HEAD
       console.error('OpenRouter API error:', error);
-=======
-      console.error('OpenAI API error:', error);
->>>>>>> 4cf4bf224f8b7bd973fcaacd7d992cc5f4736a85
 
       // Enhanced error handling with fallback suggestions
       let userMessage = CONFIG.MESSAGES.AI_UNAVAILABLE;
 
-<<<<<<< HEAD
       if (error.message.includes('API key') || error.message.includes('API_KEY')) {
-        userMessage = `❌ OpenRouter API key is not configured. Please add OPENROUTER_API_KEY to the backend .env file. Get your key from https://openrouter.ai/`;
-=======
-      if (error.message.includes('API key not configured')) {
-        userMessage = `❌ OpenAI API key is not configured. Please check your .env file.`;
->>>>>>> 4cf4bf224f8b7bd973fcaacd7d992cc5f4736a85
+        userMessage = `❌ OpenRouter API key is not configured. Please add OPENROUTER_API_KEY to the backend .env file.`;
       } else if (error.message.includes('timeout') || error.message.includes('network')) {
         userMessage = `❌ Network error. ${CONFIG.MESSAGES.NETWORK_ERROR}`;
       }

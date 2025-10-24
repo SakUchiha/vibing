@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "cd code-understanding-app && start-app.bat",
-    "dev": "cd code-understanding-app && start-app.bat",
+    "start": "./start-app.sh",
+    "dev": "./start-app.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

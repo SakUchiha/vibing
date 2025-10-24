@@ -1,0 +1,813 @@
+require('dotenv').config();
+const express = require('express');
+const path = require('path');
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const cors = require('cors');
+const lessons = require('./data/lessons.json');
+const app = express();
+
+// Serve static files from the frontend directory
+app.use(express.static(path.join(__dirname, '../../frontend')));
+
+// Serve index.html for root route
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../frontend/index.html'));
+});
+
+// Simple in-memory cache for API responses
+const responseCache = new Map();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+// Cache middleware
+function cacheMiddleware(req, res, next) {
+  const key = req.originalUrl;
+  const cached = responseCache.get(key);
+
+  if (cached && (Date.now() - cached.timestamp) < CACHE_DURATION) {
+    return res.json(cached.data);
+  }
+
+  // Store original send method
+  const originalSend = res.json;
+  res.json = function(data) {
+    responseCache.set(key, { data, timestamp: Date.now() });
+    originalSend.call(this, data);
+  };
+
+  next();
+}
+
+app.use(cors());
+app.use(express.json());
+
+// Get all lessons
+app.get('/api/lessons', cacheMiddleware, (req, res) => res.json(lessons));
+
+// Get one lesson
+app.get('/api/lessons/:id', cacheMiddleware, (req, res) => {
+  const lesson = lessons.find(l => l.id === req.params.id);
+  if (!lesson) return res.status(404).json({ error: 'Lesson not found' });
+  res.json(lesson);
+});
+
+// Together AI health check endpoint
+app.get('/api/openai/health', async (req, res) => {
+  try {
+    const hasKey = !!process.env.TOGETHER_API_KEY;
+    if (!hasKey) {
+      return res.status(503).json({
+        status: 'unhealthy',
+        service: 'not_configured',
+        error: 'TOGETHER_API_KEY is missing',
+        suggestions: [
+          'Get a free API key from https://together.ai',
+          'Add TOGETHER_API_KEY to backend .env',
+          'Restart the server'
+        ]
+      });
+    }
+
+    // Test Together AI with a simple request
+    try {
+      const response = await together.models.list();
+      const models = response.data || [];
+
+      // Filter for coding-friendly models
+      const codingModels = models.filter(model =>
+        model.id.includes('llama') ||
+        model.id.includes('code') ||
+        model.id.includes('codellama') ||
+        model.id.includes('deepseek') ||
+        model.id.includes('mixtral')
+      );
+
+      return res.json({
+        status: 'healthy',
+        service: 'together_ai_configured',
+        accountInfo: {
+          type: 'free_tier',
+          modelsAvailable: models.length,
+          codingModels: codingModels.length
+        },
+        availableModels: [
+          'meta-llama/Llama-3.3-70B-Instruct-Turbo (recommended)',
+          'meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo',
+          'codellama/CodeLlama-34b-Instruct-hf',
+          'deepseek-ai/deepseek-coder-33b-instruct',
+          'mistralai/Mixtral-8x7B-Instruct-v0.1'
+        ],
+        recommendedModels: ['meta-llama/Llama-3.3-70B-Instruct-Turbo'],
+        modelAliases: {
+          'llama': 'meta-llama/Llama-3.3-70B-Instruct-Turbo',
+          'code': 'codellama/CodeLlama-34b-Instruct-hf',
+          'codellama': 'codellama/CodeLlama-34b-Instruct-hf',
+          'deepseek': 'deepseek-ai/deepseek-coder-33b-instruct',
+          'mixtral': 'mistralai/Mixtral-8x7B-Instruct-v0.1'
+        },
+        setupGuide: {
+          step1: 'Get free API key from https://together.ai',
+          step2: 'Add key to .env file',
+          step3: 'Restart server',
+          step4: 'Test with: curl http://localhost:4000/api/openai/health'
+        }
+      });
+    } catch (error) {
+      return res.status(503).json({
+        status: 'unhealthy',
+        service: 'api_error',
+        error: 'Together AI API connection failed',
+        suggestions: [
+          'Check your API key is correct',
+          'Verify Together AI service is accessible',
+          'Visit https://together.ai to check your account status'
+        ],
+        details: error.message
+      });
+    }
+  } catch (error) {
+    res.status(503).json({
+      status: 'unhealthy',
+      service: 'error',
+      error: error.message,
+      suggestions: [
+        'Check server logs',
+        'Verify Together API key',
+        'Check internet connectivity',
+        'Get API key from https://together.ai'
+      ]
+    });
+  }
+});
+
+// Helper to map model names to Together AI models
+function mapModel(model) {
+  if (!model) return 'meta-llama/Llama-3.3-70B-Instruct-Turbo'; // Default to best coding model
+
+  const map = {
+    // Best models for coding tasks
+    'llama': 'meta-llama/Llama-3.3-70B-Instruct-Turbo',
+    'llama-3.3': 'meta-llama/Llama-3.3-70B-Instruct-Turbo',
+    'llama-3.2': 'meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo',
+
+    // Code-specific models
+    'code': 'codellama/CodeLlama-34b-Instruct-hf',
+    'codellama': 'codellama/CodeLlama-34b-Instruct-hf',
+    'code-llama': 'codellama/CodeLlama-34b-Instruct-hf',
+
+    // Other coding-friendly models
+    'deepseek': 'deepseek-ai/deepseek-coder-33b-instruct',
+    'deepseek-coder': 'deepseek-ai/deepseek-coder-33b-instruct',
+    'mixtral': 'mistralai/Mixtral-8x7B-Instruct-v0.1',
+    'mistral': 'mistralai/Mixtral-8x7B-Instruct-v0.1',
+
+    // Aliases for compatibility
+    'gemini': 'meta-llama/Llama-3.3-70B-Instruct-Turbo',
+    'gpt': 'meta-llama/Llama-3.3-70B-Instruct-Turbo',
+    'auto': 'meta-llama/Llama-3.3-70B-Instruct-Turbo'
+  };
+
+  return map[model] || model;
+}
+
+// Get fallback models for Together AI
+function getFallbackModels(preferredModel) {
+  const allModels = [
+    'meta-llama/Llama-3.3-70B-Instruct-Turbo',
+    'codellama/CodeLlama-34b-Instruct-hf',
+    'deepseek-ai/deepseek-coder-33b-instruct',
+    'mistralai/Mixtral-8x7B-Instruct-v0.1',
+    'meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo'
+  ];
+
+  const index = allModels.indexOf(preferredModel);
+  if (index !== -1) {
+    return allModels.slice(index);
+  }
+  return allModels;
+}
+
+// Together AI chat completion function with fallback support
+async function makeTogetherRequest(messages, model, maxRetries = 2) {
+  const apiKey = process.env.TOGETHER_API_KEY;
+  const fallbackModels = getFallbackModels(mapModel(model));
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    const currentModel = fallbackModels[attempt] || fallbackModels[fallbackModels.length - 1];
+
+    try {
+      console.log(`🔄 Attempting Together AI request with model: ${currentModel} (attempt ${attempt + 1})`);
+
+      const response = await together.chat.completions.create({
+        model: currentModel,
+        messages: messages,
+        temperature: 0.7,
+        max_tokens: 2048,
+        top_p: 0.9,
+        top_k: 40,
+        repetition_penalty: 1.1,
+        stop: ["<|endoftext|>", "</s>"]
+      });
+
+      if (response && response.choices && response.choices[0] && response.choices[0].message) {
+        return response;
+      }
+
+      throw new Error('Invalid response format from Together AI');
+
+    } catch (err) {
+      console.log(`❌ Attempt ${attempt + 1} failed: ${err.message}`);
+
+      // If it's the last attempt, throw the error
+      if (attempt === maxRetries) {
+        throw err;
+      }
+
+      // Wait before retrying
+      await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+    }
+  }
+}
+
+// Mock AI responses for development/testing when API key is not configured
+function getMockResponse(type, content, language) {
+  const mockResponses = {
+    chat: {
+      general: "Hello! I'm a mock AI assistant. To enable real AI responses, please configure your Together AI API key by visiting https://together.ai and updating the TOGETHER_API_KEY in your .env file.",
+      html: "HTML (HyperText Markup Language) is the standard markup language for creating web pages. It provides the structure and content of a webpage. To enable AI explanations, please set up your Together AI API key.",
+      css: "CSS (Cascading Style Sheets) is used to style and layout web pages. It controls the visual appearance of HTML elements. Configure your Together AI API key to get detailed explanations.",
+      javascript: "JavaScript is a programming language that adds interactivity to web pages. It runs in the browser and can manipulate HTML and CSS. Set up your Together AI API key for comprehensive explanations."
+    },
+    explanation: {
+      html: `This HTML code creates a basic webpage structure:
+
+\`\`\`html
+${content}
+\`\`\`
+
+**Explanation:**
+- This appears to be a simple HTML document
+- To get detailed explanations, please configure your Together AI API key
+- Visit https://together.ai to get started for free
+
+**What you need to do:**
+1. Get API key from Together AI
+2. Update .env file
+3. Restart the server`,
+      css: `This CSS code defines styling rules:
+
+\`\`\`css
+${content}
+\`\`\`
+
+**Explanation:**
+- This is a CSS stylesheet that controls visual appearance
+- To get detailed explanations, please set up Together AI
+- CodeLlama model is excellent for CSS explanations
+
+**Setup Steps:**
+1. Visit https://together.ai
+2. Get free API key
+3. Update TOGETHER_API_KEY in .env`,
+      javascript: `This JavaScript code provides functionality:
+
+\`\`\`javascript
+${content}
+\`\`\`
+
+**Explanation:**
+- This is JavaScript code that adds interactivity
+- Together AI's CodeLlama model excels at explaining JavaScript
+- Perfect for learning programming concepts
+
+**To Enable Real AI:**
+1. Get free API key from https://together.ai
+2. Update your .env file
+3. Restart the server`
+    }
+  };
+app.post('/api/openai', validateOpenAIRequest, async (req, res) => {
+  const { messages, model } = req.body || {};
+  const apiKey = process.env.TOGETHER_API_KEY;
+
+  if (!apiKey || apiKey === 'your_together_ai_key_here') {
+    // Provide mock response for development/testing
+    const userMessage = messages[0]?.content || '';
+    let mockResponse = getMockResponse('chat', userMessage);
+
+    // Customize response based on content
+    if (userMessage.toLowerCase().includes('html')) {
+      mockResponse = getMockResponse('chat', 'html');
+    } else if (userMessage.toLowerCase().includes('css')) {
+      mockResponse = getMockResponse('chat', 'css');
+    } else if (userMessage.toLowerCase().includes('javascript') || userMessage.toLowerCase().includes('js')) {
+      mockResponse = getMockResponse('chat', 'javascript');
+    }
+
+    console.log(`📝 Providing mock AI response (configure API key for real AI)`);
+
+    return res.json({
+      choices: [{
+        message: {
+          content: mockResponse,
+          role: 'assistant'
+        }
+      }],
+      model: 'mock-ai-assistant',
+      usage: {
+        prompt_tokens: userMessage.length,
+        completion_tokens: mockResponse.length,
+        total_tokens: userMessage.length + mockResponse.length
+      },
+      _metadata: {
+        provider: 'Mock AI (Development Mode)',
+        note: 'Configure Together AI API key for real responses',
+        setupUrl: 'https://together.ai'
+      }
+    });
+  }
+
+  if (!apiKey) {
+    return res.status(500).json({
+      error: 'Together AI API key not configured',
+      code: 'API_KEY_MISSING',
+      suggestions: [
+        'Get a free API key from https://together.ai',
+        'Add TOGETHER_API_KEY to your .env file',
+        'Restart the server'
+      ]
+    });
+  }
+
+  try {
+    const data = await makeTogetherRequest(messages, model);
+
+    // Log successful request
+    const usedModel = data.model || mapModel(model);
+    console.log(`✅ AI chat successful with Together AI model: ${usedModel}`);
+
+    return res.json({
+      choices: [{
+        message: {
+          content: data.choices[0].message.content,
+          role: 'assistant'
+        }
+      }],
+      model: usedModel,
+      usage: {
+        prompt_tokens: data.usage?.prompt_tokens || 0,
+        completion_tokens: data.usage?.completion_tokens || 0,
+        total_tokens: data.usage?.total_tokens || 0
+      },
+      _metadata: {
+        provider: 'Together AI',
+        usedFallback: false,
+        timestamp: new Date().toISOString()
+      }
+    });
+
+  } catch (err) {
+    console.error('Together AI chat error:', err);
+
+    // Provide specific error messages
+    let errorMessage = 'AI chat request failed';
+    let errorCode = 'AI_REQUEST_FAILED';
+    let suggestions = ['Please try again in a moment'];
+
+    if (err.message.includes('401') || err.message.includes('Unauthorized')) {
+      errorMessage = 'Invalid Together AI API key';
+      errorCode = 'INVALID_API_KEY';
+      suggestions = [
+        'Verify your Together AI API key is correct',
+        'Make sure your API key hasn\'t expired',
+        'Check your Together AI account status'
+      ];
+    } else if (err.message.includes('429') || err.message.includes('rate limit')) {
+      errorMessage = 'Together AI rate limit exceeded';
+      errorCode = 'RATE_LIMIT_EXCEEDED';
+      suggestions = [
+        'Wait a moment before trying again',
+        'Together AI free tier has usage limits',
+        'Consider upgrading for higher limits'
+      ];
+    } else if (err.message.includes('model') && err.message.includes('not found')) {
+      errorMessage = 'Requested model not available';
+      errorCode = 'MODEL_NOT_AVAILABLE';
+      suggestions = [
+        'Try a different model (llama, code, deepseek)',
+        'Check available models in health endpoint',
+        'Use default model selection'
+      ];
+    }
+
+    return res.status(500).json({
+      error: errorMessage,
+      code: errorCode,
+      suggestions,
+      details: err.message
+    });
+  }
+});
+
+// Together AI-powered code explanation endpoint with Llama preference
+app.post('/api/explain-code', async (req, res) => {
+  const { code, language } = req.body || {};
+  const apiKey = process.env.TOGETHER_API_KEY;
+
+  if (!code || !language) {
+    return res.status(400).json({
+      error: 'Code and language are required',
+      code: 'MISSING_PARAMETERS',
+      suggestions: ['Provide both code and language parameters']
+    });
+  }
+
+  if (!['html', 'css', 'javascript'].includes(String(language).toLowerCase())) {
+    return res.status(400).json({
+      error: 'Unsupported language. Supported: html, css, javascript',
+      code: 'UNSUPPORTED_LANGUAGE',
+      suggestions: ['Use one of: html, css, javascript']
+    });
+  }
+
+  if (!apiKey || apiKey === 'your_together_ai_key_here') {
+    // Provide mock response for development/testing
+    const mockExplanation = getMockResponse('explanation', code, String(language).toLowerCase());
+
+    console.log(`📝 Providing mock code explanation (configure API key for real AI)`);
+
+    return res.json({
+      language: String(language).toLowerCase(),
+      explanation: mockExplanation,
+      rawResponse: mockExplanation,
+      model: 'mock-code-explainer',
+      provider: 'Mock AI (Development Mode)',
+      success: true,
+      note: 'Configure Together AI API key for real explanations',
+      setupUrl: 'https://together.ai',
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  if (!apiKey) {
+    return res.status(500).json({
+      error: 'Together AI API key not configured',
+      code: 'API_KEY_MISSING',
+      suggestions: [
+        'Get a free API key from https://together.ai',
+        'Add TOGETHER_API_KEY to your .env file',
+        'Restart the server'
+      ]
+    });
+  }
+
+  try {
+    // Create comprehensive explanation prompts based on language
+    const explanationPrompts = {
+      html: `You are an expert HTML tutor using Together AI. Explain this HTML code in detail, breaking it down step by step:
+
+HTML Code:
+${code}
+
+Please provide a comprehensive explanation covering:
+1. Overall structure and purpose of the HTML document
+2. Key HTML elements and their semantic meanings and functions
+3. How elements are nested and their hierarchical relationships
+4. All attributes used and their specific purposes and values
+5. Modern HTML5 standards, semantic HTML best practices, and accessibility considerations
+6. Step-by-step breakdown of what the code does when rendered
+7. Any potential improvements or modern alternatives
+8. How this code interacts with CSS and JavaScript if present
+
+Explain it as if teaching someone who is learning HTML, using simple language, clear examples, and practical analogies. Include code snippets to illustrate key points. Be detailed but concise.`,
+
+      css: `You are an expert CSS tutor using Together AI. Explain this CSS code in detail, breaking it down step by step:
+
+CSS Code:
+${code}
+
+Please provide a comprehensive explanation covering:
+1. Overall styling approach, design philosophy, and visual theme
+2. Key selectors (element, class, ID, pseudo-classes) and what elements they target
+3. CSS properties and their specific effects on appearance and behavior
+4. Layout and positioning concepts (flexbox, grid, positioning, floats)
+5. Responsive design considerations and media queries if present
+6. Color schemes, typography choices, and design system principles
+7. Step-by-step breakdown of how styles cascade and are applied
+8. CSS specificity, inheritance, and potential conflicts
+9. Performance considerations and optimization opportunities
+10. Browser compatibility and modern CSS features used
+
+Explain it as if teaching someone who is learning CSS, using simple language, visual examples, and practical analogies. Include code snippets to illustrate key concepts. Be detailed but concise.`,
+
+      javascript: `You are an expert JavaScript tutor using Together AI. Explain this JavaScript code in detail, breaking it down step by step:
+
+JavaScript Code:
+${code}
+
+Please provide a comprehensive explanation covering:
+1. Overall purpose, functionality, and program flow
+2. Variables, data types, scope, and their usage patterns
+3. Functions, parameters, return values, and function types (declarations, expressions, arrow functions)
+4. Control structures (loops, conditionals, switch statements) and their logic
+5. DOM manipulation, event handling, and browser API interactions
+6. Key programming concepts (closures, hoisting, async/await, promises, etc.)
+7. Step-by-step execution flow and call stack behavior
+8. Error handling and debugging considerations
+9. Modern JavaScript features (ES6+, modules, destructuring, etc.)
+10. Best practices, performance considerations, and potential improvements
+11. Security implications and safe coding practices
+
+Explain it as if teaching someone who is learning JavaScript, using simple language, clear examples, and practical analogies. Include code snippets to illustrate complex concepts and walk through execution step-by-step. Be detailed but concise.`
+    };
+
+    const systemPrompt = {
+      role: 'system',
+      content: 'You are a helpful coding tutor using Together AI. Provide clear, educational explanations focused on helping users learn web development. Be encouraging and use simple language while covering technical details thoroughly.'
+    };
+
+    const userPrompt = {
+      role: 'user',
+      content: explanationPrompts[String(language).toLowerCase()]
+    };
+
+    // Use CodeLlama as the preferred model for code explanations (best for coding tasks)
+    const data = await makeTogetherRequest([systemPrompt, userPrompt], 'code');
+
+    const explanation = data.choices?.[0]?.message?.content || 'Unable to explain code';
+
+    // Log successful explanation request
+    const usedModel = data.model || 'codellama/CodeLlama-34b-Instruct-hf';
+    console.log(`✅ Code explanation successful with Together AI model: ${usedModel} for ${language}`);
+
+    return res.json({
+      language: String(language).toLowerCase(),
+      explanation: explanation,
+      rawResponse: explanation,
+      model: usedModel,
+      provider: 'Together AI (CodeLlama)',
+      success: true,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (err) {
+    console.error('Together AI code explanation error:', err);
+
+    // Provide specific error messages
+    let errorMessage = 'Code explanation failed';
+    let errorCode = 'EXPLANATION_ERROR';
+    let suggestions = ['Please try again in a moment'];
+
+    if (err.message.includes('401') || err.message.includes('Unauthorized')) {
+      errorMessage = 'Invalid Together AI API key';
+      errorCode = 'INVALID_API_KEY';
+      suggestions = [
+        'Verify your Together AI API key is correct',
+        'Make sure your API key hasn\'t expired',
+        'Check your Together AI account status'
+      ];
+    } else if (err.message.includes('429') || err.message.includes('rate limit')) {
+      errorMessage = 'Together AI rate limit exceeded';
+      errorCode = 'RATE_LIMIT_EXCEEDED';
+      suggestions = [
+        'Wait a moment before trying again',
+        'Together AI free tier has usage limits',
+        'Consider upgrading for higher limits'
+      ];
+    } else if (err.message.includes('model') && err.message.includes('not found')) {
+      errorMessage = 'Code explanation model not available';
+      errorCode = 'MODEL_NOT_AVAILABLE';
+      suggestions = [
+        'Try using the default model',
+        'Check available models in health endpoint',
+        'CodeLlama model should be available'
+      ];
+    }
+
+    return res.status(500).json({
+      error: errorMessage,
+      code: errorCode,
+      suggestions,
+      language: String(language).toLowerCase(),
+      details: err.message
+    });
+  }
+});
+
+// AI Builder endpoint for Together AI
+app.post('/api/ai-builder', async (req, res) => {
+  const { prompt, model, task, language } = req.body || {};
+  const apiKey = process.env.TOGETHER_API_KEY;
+
+  if (!apiKey || apiKey === 'your_together_ai_key_here') {
+    // Provide mock response for development/testing
+    let mockResponse = getMockResponse('chat', prompt);
+
+    // Customize response based on task
+    if (task === 'code-explanation' && language) {
+      mockResponse = getMockResponse('explanation', prompt, language);
+    } else if (task === 'code-review') {
+      mockResponse = `This code looks good! However, to get a detailed code review, please configure your Together AI API key.
+
+**Setup Steps:**
+1. Visit https://together.ai
+2. Get free API key
+3. Update .env file
+4. Restart server
+
+**What Together AI CodeLlama will analyze:**
+- Code quality and best practices
+- Potential bugs or issues
+- Performance optimizations
+- Security considerations
+- Modern coding standards`;
+    }
+
+    console.log(`📝 Providing mock AI Builder response (configure API key for real AI)`);
+
+    return res.json({
+      success: true,
+      response: mockResponse,
+      metadata: {
+        task,
+        model: 'mock-ai-builder',
+        provider: 'Mock AI (Development Mode)',
+        language,
+        promptLength: prompt.length,
+        responseLength: mockResponse.length,
+        timestamp: new Date().toISOString(),
+        note: 'Configure Together AI API key for real responses'
+      }
+    });
+  }
+
+  if (!apiKey) {
+    return res.status(500).json({
+      error: 'Together AI API key not configured',
+      code: 'API_KEY_MISSING',
+      suggestions: [
+        'Get a free API key from https://together.ai',
+        'Add TOGETHER_API_KEY to your .env file',
+        'Restart the server'
+      ]
+    });
+  }
+
+  if (!prompt) {
+    return res.status(400).json({
+      error: 'Prompt is required',
+      code: 'MISSING_PROMPT',
+      suggestions: ['Provide a prompt for the AI to respond to']
+    });
+  }
+
+  try {
+    // Determine the best model based on task
+    let selectedModel = model || 'llama';
+    let systemPrompt = '';
+
+    if (task === 'code-explanation' && language) {
+      selectedModel = 'code'; // Use CodeLlama for code explanations
+      systemPrompt = `You are an expert ${language.toUpperCase()} tutor using Together AI. Provide detailed, educational explanations that help users learn programming concepts. Be encouraging and use simple language while covering technical details thoroughly.`;
+    } else if (task === 'general-chat') {
+      selectedModel = 'llama'; // Use Llama for general chat
+      systemPrompt = 'You are a helpful AI assistant using Together AI. Provide clear, accurate, and useful responses to user questions.';
+    } else if (task === 'code-review') {
+      selectedModel = 'code'; // Use CodeLlama for code review
+      systemPrompt = 'You are an expert code reviewer using Together AI. Analyze code for best practices, potential bugs, performance issues, and suggest improvements. Be constructive and educational.';
+    } else {
+      selectedModel = 'llama'; // Default to Llama
+      systemPrompt = 'You are a helpful AI assistant using Together AI. Provide accurate and useful responses.';
+    }
+
+    const messages = [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: prompt }
+    ];
+
+    const data = await makeTogetherRequest(messages, selectedModel);
+    const response = data.choices?.[0]?.message?.content || 'No response generated';
+
+    // Log the request details
+    const usedModel = data.model || selectedModel;
+    console.log(`✅ AI Builder request successful:`, {
+      task,
+      model: usedModel,
+      language,
+      promptLength: prompt.length,
+      responseLength: response.length
+    });
+
+    return res.json({
+      success: true,
+      response,
+      metadata: {
+        task,
+        model: usedModel,
+        provider: 'Together AI',
+        language,
+        promptLength: prompt.length,
+        responseLength: response.length,
+        timestamp: new Date().toISOString()
+      }
+    });
+
+  } catch (err) {
+    console.error('AI Builder error:', err);
+
+    let errorMessage = 'AI Builder request failed';
+    let errorCode = 'BUILDER_ERROR';
+    let suggestions = ['Please try again in a moment'];
+
+    if (err.message.includes('401') || err.message.includes('Unauthorized')) {
+      errorMessage = 'Invalid Together AI API key';
+      errorCode = 'INVALID_API_KEY';
+      suggestions = [
+        'Verify your Together AI API key is correct',
+        'Make sure your API key hasn\'t expired',
+        'Check your Together AI account status'
+      ];
+    } else if (err.message.includes('429') || err.message.includes('rate limit')) {
+      errorMessage = 'Together AI rate limit exceeded';
+      errorCode = 'RATE_LIMIT_EXCEEDED';
+      suggestions = [
+        'Wait a moment before trying again',
+        'Together AI free tier has usage limits',
+        'Consider upgrading for higher limits'
+      ];
+    }
+
+    return res.status(500).json({
+      success: false,
+      error: errorMessage,
+      code: errorCode,
+      suggestions,
+      metadata: {
+        task,
+        model,
+        language,
+        timestamp: new Date().toISOString()
+      },
+      details: err.message
+    });
+  }
+});
+
+function validateOpenAIRequest(req, res, next) {
+  const { messages, model } = req.body;
+
+  // Validate messages array
+  if (!Array.isArray(messages) || messages.length === 0) {
+    return res.status(400).json({
+      error: 'Messages must be a non-empty array',
+      code: 'INVALID_MESSAGES'
+    });
+  }
+
+  // Validate each message
+  for (const message of messages) {
+    if (!message.role || !message.content) {
+      return res.status(400).json({
+        error: 'Each message must have role and content',
+        code: 'INVALID_MESSAGE_FORMAT'
+      });
+    }
+    if (!['user', 'assistant', 'system'].includes(message.role)) {
+      return res.status(400).json({
+        error: 'Message role must be user, assistant, or system',
+        code: 'INVALID_ROLE'
+      });
+    }
+    if (typeof message.content !== 'string' || message.content.length > 10000) {
+      return res.status(400).json({
+        error: 'Message content must be a string with max 10000 characters',
+        code: 'INVALID_CONTENT'
+      });
+    }
+  }
+
+  // Validate model (allow Together AI model aliases)
+  if (model && typeof model !== 'string') {
+    return res.status(400).json({
+      error: 'Model must be a string',
+      code: 'INVALID_MODEL_TYPE'
+    });
+  }
+
+  next();
+}
+
+// Add security headers
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  next();
+});
+
+// Start server
+const port = process.env.PORT || 4000;
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
+});

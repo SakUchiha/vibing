@@ -19,11 +19,7 @@ class AIAssistant {
     this.statusRefreshBtn = document.getElementById('statusRefreshBtn');
     this.modelSelect = document.getElementById('modelSelect');
     this.modelInfo = document.getElementById('modelInfo');
-<<<<<<< HEAD
-    this.selectedModel = 'gpt-4o';
-=======
-    this.selectedModel = 'gpt-3.5-turbo';
->>>>>>> 4cf4bf224f8b7bd973fcaacd7d992cc5f4736a85
+    this.selectedModel = 'gpt-4o-mini'
 
     this.init();
   }
@@ -383,17 +379,10 @@ class AIAssistant {
 
   updateModelInfo() {
     const modelInfos = {
-<<<<<<< HEAD
-      'gpt-3.5-turbo': 'Fast, budget-friendly',
-      'gpt-4': 'High quality, slower',
-      'gpt-4-turbo-preview': 'Fast GPT-4, good balance',
+      'gpt-4o-mini': 'Fastest and lowest cost',
       'gpt-4o': 'Multimodal, high quality and speed',
-      'gpt-4o-mini': 'Fastest and lowest cost'
-=======
-      'gpt-3.5-turbo': 'Fast, good quality responses',
-      'gpt-4': 'Best quality, slower responses',
-      'gpt-4-turbo-preview': 'Latest model, balanced performance'
->>>>>>> 4cf4bf224f8b7bd973fcaacd7d992cc5f4736a85
+      'gpt-4': 'High quality, slower',
+      'gpt-3.5-turbo': 'Fast, budget-friendly'
     };
 
     if (this.modelInfo) {
@@ -406,43 +395,23 @@ class AIAssistant {
   showModelSuggestion(suggestion) {
     const message = `💡 **Model Suggestion:** ${suggestion}
 
-<<<<<<< HEAD
 To get the best AI experience, make sure your OpenRouter API key is configured in the backend .env file.`;
-=======
-To get the best AI experience, make sure your OpenAI API key is properly configured in the backend .env file.`;
->>>>>>> 4cf4bf224f8b7bd973fcaacd7d992cc5f4736a85
 
     this.addMessage('ai', message);
   }
 
   showSetupSuggestion(suggestions) {
-<<<<<<< HEAD
-    let message = `🚀 **Setup Required:** AI assistant needs OpenRouter API key to work.
+    let message = `🚀 **Setup Required:** AI assistant needs an OpenRouter API key to work.
 
 **Quick Setup Steps:**
-1. **Get OpenRouter API key:** https://openrouter.ai/
-2. **Add to backend .env file:** OPENROUTER_API_KEY=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
-3. **Restart the server**
+1. Get API key: https://openrouter.ai/
+2. Add to backend .env: OPENROUTER_API_KEY=your_key_here
+3. Restart the server
 
 **Why OpenRouter?**
-• Access to multiple AI models
-• Competitive pricing
-• Easy API integration
-• High reliability
-=======
-    let message = `🚀 **Setup Required:** AI assistant needs OpenAI API key to work.
-
-**Quick Setup Steps:**
-1. **Get OpenAI API Key:** https://platform.openai.com/api-keys
-2. **Configure in backend:** Add your API key to the .env file
-3. **Restart the server**
-
-**Why OpenAI?**
-• Powerful GPT models for coding assistance
-• Advanced code understanding and generation
-• Reliable and fast responses
-• Industry-standard AI service
->>>>>>> 4cf4bf224f8b7bd973fcaacd7d992cc5f4736a85
+• Access to OpenAI GPT models via one gateway
+• Competitive pricing and reliable routing
+• Simple API integration
 
 Once setup is complete, refresh this page to start chatting with AI! 🤖`;
 
@@ -460,15 +429,9 @@ Once setup is complete, refresh this page to start chatting with AI! 🤖`;
       const response = await apiService.get('/api/openai/health');
 
       if (response.status === 'healthy') {
-<<<<<<< HEAD
         this.aiStatus.innerHTML = `<i class="fas fa-check-circle"></i> AI Ready`;
         this.aiStatus.className = 'ai-status healthy';
         this.aiStatus.title = `OpenRouter API configured and ready`;
-=======
-        this.aiStatus.innerHTML = `<i class="fas fa-check-circle"></i> AI Ready (OpenAI)`;
-        this.aiStatus.className = 'ai-status healthy';
-        this.aiStatus.title = `OpenAI API is configured and ready`;
->>>>>>> 4cf4bf224f8b7bd973fcaacd7d992cc5f4736a85
       } else {
         this.aiStatus.innerHTML = '<i class="fas fa-times-circle"></i> AI Unavailable';
         this.aiStatus.className = 'ai-status unhealthy';
@@ -720,7 +683,7 @@ Keep practicing - you'll get the hang of it! 🚀`;
       uiManager.setButtonLoading('sendButton', true, 'Thinking...');
 
       const response = await apiService.post('/api/openai', {
-        messages: [{role: 'user', content: message}],
+        messages: [{ role: 'user', content: message }],
         model: this.selectedModel
       });
 
@@ -744,7 +707,6 @@ Keep practicing - you'll get the hang of it! 🚀`;
       let userMessage = CONFIG.MESSAGES.AI_UNAVAILABLE;
       let suggestions = [];
 
-<<<<<<< HEAD
       if (error.message.includes('API key') || error.message.includes('API_KEY')) {
         userMessage = `❌ OpenRouter API key is not configured. Here's how to fix it:
 
@@ -752,34 +714,22 @@ Keep practicing - you'll get the hang of it! 🚀`;
 1. Get API key from: https://openrouter.ai/
 2. Add to backend .env file: OPENROUTER_API_KEY=your_key_here
 3. Restart the server
-=======
-      if (error.message.includes('API key not configured')) {
-        userMessage = `❌ OpenAI API key is not configured. Here's how to fix it:
-
-**Quick Setup:**
-1. Get OpenAI API key: https://platform.openai.com/api-keys
-2. Add to backend .env file: OPENAI_API_KEY=your_key_here
-3. Restart the KidLearner server
->>>>>>> 4cf4bf224f8b7bd973fcaacd7d992cc5f4736a85
 4. Refresh this page
 
 **Need Help?** Check the README.md for detailed setup instructions.`;
         suggestions = [
-<<<<<<< HEAD
           'Get OpenRouter API key from https://openrouter.ai/',
           'Add OPENROUTER_API_KEY to .env file',
           'Restart the server',
           'Refresh this page'
         ];
-      } else if (error.message.includes('rate limit')) {
+      } else if (error.message.includes('rate limit') || error.message.includes('429')) {
         userMessage = `❌ OpenRouter rate limit exceeded.
 
 **What to do:**
 • Wait a few minutes before trying again
 • Check your OpenRouter account limits
-• Consider upgrading your plan if needed
-
-**Rate limits help ensure fair usage for all users.`;
+• Consider upgrading your plan if needed`;
         suggestions = [
           'Wait a few minutes',
           'Check OpenRouter account limits',
@@ -791,82 +741,36 @@ Keep practicing - you'll get the hang of it! 🚀`;
 **Troubleshooting:**
 • Check your internet connection
 • Try again in a few moments
-• Contact support if issues persist
-
-**OpenRouter provides reliable AI access through multiple providers.`;
+• Contact OpenRouter support if issues persist`;
         suggestions = [
           'Check internet connection',
           'Try again in a few moments',
           'Contact OpenRouter support if needed'
-=======
-          'Get API key from https://platform.openai.com/api-keys',
-          'Add to .env file',
-          'Restart server',
-          'Refresh this page'
-        ];
-      } else if (error.message.includes('401') || error.message.includes('Invalid API key')) {
-        userMessage = `❌ Invalid OpenAI API key.
-
-**Troubleshooting:**
-• Check your API key is correct
-• Make sure it starts with 'sk-'
-• Verify you have credits/quota
-• Try regenerating the key
-
-**Status check:** Check your OpenAI dashboard for key validity.`;
-        suggestions = [
-          'Verify API key format',
-          'Check OpenAI dashboard',
-          'Regenerate key if needed'
-        ];
-      } else if (error.message.includes('429') || error.message.includes('rate limit')) {
-        userMessage = `❌ OpenAI API rate limit exceeded.
-
-**What this means:**
-• You've made too many requests
-• Wait a few minutes before trying again
-• Consider upgrading your OpenAI plan
-
-**Rate limits vary by model and plan.**`;
-        suggestions = [
-          'Wait a few minutes',
-          'Check your OpenAI usage',
-          'Consider upgrading plan'
-        ];
-      } else if (error.message.includes('timeout') || error.message.includes('network')) {
-        userMessage = `❌ Network error connecting to OpenAI.
-
-**Troubleshooting:**
-• Check your internet connection
-• Try again in a few moments
-• OpenAI services might be temporarily unavailable
-
-**Status check:** Visit https://status.openai.com`;
-        suggestions = [
-          'Check internet connection',
-          'Wait and try again',
-          'Check OpenAI status page'
->>>>>>> 4cf4bf224f8b7bd973fcaacd7d992cc5f4736a85
         ];
       } else {
         userMessage = `❌ AI Assistant Error: ${error.message}
 
 **General troubleshooting:**
-<<<<<<< HEAD
 • Restart the server
 • Check OpenRouter API key is valid
 • Try refreshing the page
 • Check browser console for details`;
         suggestions = [
           'Restart server',
-=======
-• Restart the KidLearner server
-• Check OpenAI API key configuration
+          'Verify API key',
+          'Refresh the page'
+        ];
+      }
+      } else {
+        userMessage = `❌ AI Assistant Error: ${error.message}
+
+**General troubleshooting:**
+• Restart the server
+• Check OpenRouter API key is valid
 • Try refreshing the page
 • Check browser console for details`;
         suggestions = [
-          'Restart KidLearner server',
->>>>>>> 4cf4bf224f8b7bd973fcaacd7d992cc5f4736a85
+          'Restart server',
           'Verify API key',
           'Refresh the page'
         ];
