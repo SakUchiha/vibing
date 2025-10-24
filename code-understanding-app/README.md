@@ -51,42 +51,69 @@ A modern, interactive web development learning platform designed to teach HTML, 
 
 The AI Assistant requires an OpenAI API key to function. Follow these steps to set it up:
 
-### 1. Get an OpenAI API Key
+### 1. Get OpenAI API Key
 
-1. Visit [OpenAI Platform](https://platform.openai.com/)
-2. Sign up or log in to your account
-3. Navigate to API Keys section
-4. Create a new API key
-5. Copy the API key (it starts with `sk-`)
+1. Visit [OpenAI Platform](https://platform.openai.com/api-keys)
+2. Sign in to your OpenAI account (or create one)
+3. Click "Create new secret key"
+4. Copy the API key (save it securely - you won't be able to see it again)
 
-### 2. Configure the API Key
+### 2. Configure the Backend
 
-Add your OpenAI API key to the backend configuration:
+Create a `.env` file in the `backend/server.js/` directory:
 
-1. Create a `.env` file in the `backend/server.js/` directory
-2. Add the following lines:
-   ```
-   OPENROUTER_API_KEY=foll
-   PORT=4000
-   ```
+```bash
+cd backend/server.js
+touch .env
+```
+
+Add your API key to the `.env` file:
+
+```
+OPENAI_API_KEY=your_api_key_here
+```
+
+Replace `your_api_key_here` with your actual OpenAI API key.
 
 ### 3. Verify Configuration
 
-The server will automatically load the API key from the `.env` file when it starts. Make sure the key is properly set before using the AI Assistant features.
+Restart the server and check that the AI assistant works:
 
-### 4. Troubleshooting AI (OpenRouter)
+```bash
+# Restart the server
+node server.js
+
+# Check AI status in the browser
+# Navigate to AI Assistant page and check the status indicator
+```
+
+### 4. Troubleshooting OpenAI Setup
+
+**If API key is not configured:**
+- Make sure the `.env` file exists in `backend/server.js/`
+- Verify the API key format starts with `sk-`
+- Restart the server after adding the key
+
+**If API calls fail:**
+- Check your OpenAI account has credits
+- Verify your API key is valid
+- Check network connectivity
+- Review OpenAI status page: https://status.openai.com
 
 **If AI Assistant shows "unavailable":**
-- Verify your `OPENROUTER_API_KEY` is correctly set in the `.env` file
-- Ensure you have credits with your chosen provider via OpenRouter
-- Ensure the backend server is running on port 4000 (or 4001 fallback)
+- Verify `.env` file exists with correct API key
+- Restart the KidLearner backend server
 - Check browser console for detailed error messages
+- Ensure OpenAI API is accessible from your network
 
-**Common AI Issues:**
-- **"Invalid API key"**: Double-check `OPENROUTER_API_KEY` in your `.env`
-- **"Insufficient credits"**: Add credits or choose a different model
-- **"Rate limit exceeded"**: Wait a few minutes before trying again
-- **Network errors**: Check your internet connection
+### Model Information
+
+The application uses GPT-3.5-turbo by default, which provides:
+- Fast response times
+- Good quality for coding assistance
+- Cost-effective for learning purposes
+
+You can modify the model in the backend code if needed.
 
 ## How to Use
 
@@ -104,7 +131,11 @@ The server will automatically load the API key from the `.env` file when it star
 - Click on "AI Assistant" for instant help with coding questions
 - Ask about HTML, CSS, JavaScript concepts
 - Get debugging assistance and best practices
-- The AI uses OpenAI's cloud models - internet connection required
+<<<<<<< HEAD
+- The AI uses OpenAI's cloud service for responses
+=======
+- The AI uses OpenAI's cloud service for responses
+>>>>>>> 4cf4bf224f8b7bd973fcaacd7d992cc5f4736a85
 
 ### 4. Study Guide
 - Access the comprehensive study guide for quick reference
@@ -141,7 +172,11 @@ code-understanding-app/
 
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
 - **Backend**: Node.js, Express.js
-- **AI**: OpenAI API with cloud language models
+<<<<<<< HEAD
+- **AI**: OpenAI API integration
+=======
+- **AI**: OpenAI API integration
+>>>>>>> 4cf4bf224f8b7bd973fcaacd7d992cc5f4736a85
 - **Styling**: Custom CSS with modern design principles
 - **Icons**: Font Awesome
 - **Data**: JSON-based lesson storage
@@ -161,11 +196,11 @@ code-understanding-app/
 - Responsive design that works on all devices
 
 ### AI Assistant
-- Powered by OpenAI cloud AI models
+- Powered by OpenAI's GPT models
 - Context-aware help for HTML, CSS, and JavaScript
 - Code validation and debugging assistance
 - Chat-like interface for easy interaction
-- Cloud-based processing for reliable responses
+- Cloud-based AI processing via OpenAI API
 
 ### Study Guide
 - Comprehensive reference for HTML tags, CSS properties, and JavaScript concepts
@@ -215,18 +250,18 @@ code-understanding-app/
 - Try opening the HTML files directly in your browser
 
 ### AI Assistant Not Working
-- **First, ensure your OpenAI API key is configured** (see OpenAI Setup section above)
-- Check that you have credits in your OpenAI account
-- Verify the API key is correctly set in the `.env` file
+- **First, ensure OpenAI API key is configured** (see OpenAI Setup section above)
+- Check that the `.env` file exists in `backend/server.js/`
+- Verify the API key format (should start with `sk-`)
 - Check browser console for any JavaScript errors
 - Make sure the backend server is running on port 4000
 - Try restarting the KidLearner server
 
 ### Common OpenAI Issues
-- **"Invalid API key"**: Double-check the key in your `.env` file
-- **"Insufficient credits"**: Add credits to your OpenAI account
+- **"API key not configured"**: Add OpenAI API key to `.env` file
+- **"Invalid API key"**: Verify your API key from OpenAI platform
 - **"Rate limit exceeded"**: Wait a few minutes before trying again
-- **Network errors**: Check your internet connection
+- **Network errors**: Check internet connection and OpenAI status
 
 ## Contributing
 

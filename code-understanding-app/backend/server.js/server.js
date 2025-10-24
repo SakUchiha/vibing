@@ -1,9 +1,18 @@
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const cors = require('cors');
 const lessons = require('./data/lessons.json');
 const app = express();
+
+// Serve static files from the frontend directory
+app.use(express.static(path.join(__dirname, '../../frontend')));
+
+// Serve index.html for root route
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../frontend/index.html'));
+});
 
 // Simple in-memory cache for API responses
 const responseCache = new Map();
@@ -44,33 +53,38 @@ app.get('/api/lessons/:id', cacheMiddleware, (req, res) => {
 // OpenAI health check endpoint
 app.get('/api/openai/health', async (req, res) => {
   try {
-    const apiKey = process.env.OPENROUTER_API_KEY;
-    if (!apiKey) {
-      throw new Error('OpenRouter API key not configured');
+    // Check if Ollama service is running
+    const tagsResponse = await fetch('http://localhost:11434/api/tags');
+    if (!tagsResponse.ok) {
+      throw new Error('Ollama service not running');
     }
 
-    // Simple API key presence/shape check (avoid strict prefix to prevent false negatives)
-    if (typeof apiKey !== 'string' || apiKey.trim().length < 20) {
-      throw new Error('OpenRouter API key seems invalid');
-    }
+    const tagsData = await tagsResponse.json();
+    const availableModels = tagsData.models?.map(m => m.name) || [];
+
+    // Check for recommended models
+    const recommendedModels = ['gemma3:1b', 'llama3.2:1b', 'llama3.2:3b', 'phi3:3.8b'];
+    const installedRecommended = recommendedModels.filter(model => availableModels.includes(model));
 
     res.json({
       status: 'healthy',
-      service: 'configured',
-      apiKeyConfigured: true,
-      suggestions: []
+      service: 'running',
+      availableModels: availableModels,
+      recommendedModels: recommendedModels,
+      installedRecommended: installedRecommended,
+      suggestions: installedRecommended.length === 0 ? ['Install a recommended model: ollama pull gemma3:1b'] : []
     });
 
   } catch (error) {
-    console.error('OpenRouter health check failed:', error);
+    console.error('Ollama health check failed:', error);
     res.status(503).json({
       status: 'unhealthy',
       service: 'not_configured',
       error: error.message,
       suggestions: [
-        'Set OPENROUTER_API_KEY in .env file',
-        'Get API key from https://openrouter.ai/',
-        'Ensure API key starts with sk-or-v1-'
+        'Start Ollama: ollama serve',
+        'Install Ollama: https://ollama.ai',
+        'Pull a model: ollama pull gemma3:1b'
       ]
     });
   }
@@ -110,10 +124,8 @@ function validateOpenAIRequest(req, res, next) {
     }
   }
 
-  // Validate model (accept bare and provider-prefixed)
-  const allowedBare = ['gpt-3.5-turbo', 'gpt-4', 'gpt-4-turbo-preview', 'gpt-4o', 'gpt-4o-mini'];
-  const allowedPrefixed = allowedBare.map(m => `openai/${m}`);
-  if (model && ![...allowedBare, ...allowedPrefixed].includes(model)) {
+  // Validate model
+  if (model && !['gemma3:1b', 'llama2', 'llama3.2:1b', 'phi3:3.8b'].includes(model)) {
     return res.status(400).json({
       error: 'Invalid model specified',
       code: 'INVALID_MODEL'
@@ -123,29 +135,23 @@ function validateOpenAIRequest(req, res, next) {
   next();
 }
 
-// OpenAI AI Assistant Proxy Endpoint for Web Development Questions
-app.post('/api/openai', validateOpenAIRequest, async (req, res) => {
-  const { messages, model = 'gpt-4o' } = req.body;
-  const apiKey = process.env.OPENROUTER_API_KEY;
-
-  // Map UI-selected models to OpenRouter provider-prefixed IDs
-  const modelMap = {
-    'gpt-3.5-turbo': 'openai/gpt-3.5-turbo',
-    'gpt-4': 'openai/gpt-4',
-    'gpt-4-turbo-preview': 'openai/gpt-4-turbo-preview',
-    'gpt-4o': 'openai/gpt-4o',
-    'gpt-4o-mini': 'openai/gpt-4o-mini'
-  };
-  const openrouterModel = modelMap[model] || model;
-
-  if (!apiKey) {
-    return res.status(500).json({
-      error: 'OpenRouter API key not configured',
-      code: 'API_KEY_MISSING'
-    });
-  }
+// Ollama AI Assistant Proxy Endpoint for Web Development Questions
+app.post('/api/ollama', validateOllamaRequest, async (req, res) => {
+  const { messages, model = 'llama3.2:1b' } = req.body;
 
   try {
+    // Check if model is available
+    const modelCheck = await fetch('http://localhost:11434/api/tags');
+    if (!modelCheck.ok) {
+      throw new Error('Ollama service is not running');
+    }
+
+    const modelData = await modelCheck.json();
+    const availableModels = modelData.models?.map(m => m.name) || [];
+    if (!availableModels.includes(model)) {
+      throw new Error(`Model '${model}' is not available. Available models: ${availableModels.join(', ')}`);
+    }
+
     // Add system prompt for web development focus
     const systemPrompt = {
       role: 'system',
@@ -154,48 +160,58 @@ app.post('/api/openai', validateOpenAIRequest, async (req, res) => {
 
     const enhancedMessages = [systemPrompt, ...messages];
 
-    console.log(`Sending request to OpenRouter API with model: ${model}`);
+    console.log(`Sending request to Ollama API with model: ${model}`);
 
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    const response = await fetch('http://localhost:11434/api/chat', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-        'HTTP-Referer': 'https://code-understanding-app.com',
-        'X-Title': 'Code Understanding App'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         model: openrouterModel,
         messages: enhancedMessages,
-        max_tokens: 2000,
-        temperature: 0.7
+        stream: false,
+        options: {
+          temperature: 0.7,
+          top_p: 0.9,
+          num_predict: 512  // Limit response length for faster responses
+        }
       })
     });
 
     if (!response.ok) {
       const responseText = await response.text();
-      console.log('OpenRouter API error response:', responseText);
-      throw new Error(`OpenRouter API error: ${response.status} ${response.statusText}`);
+      console.log('Ollama API error response:', responseText);
+      throw new Error(`Ollama API error: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
 
-    res.json(data);
+    // Format Ollama response to match OpenAI format
+    const formattedResponse = {
+      choices: [{
+        message: {
+          content: data.message?.content || data.response || 'No response from Ollama'
+        }
+      }]
+    };
+
+    res.json(formattedResponse);
   } catch (err) {
-    console.error('OpenRouter API error:', err);
+    console.error('Ollama API error:', err);
 
     // Enhanced error messages
-    let errorMessage = 'Failed to connect to OpenRouter API';
-    let errorCode = 'OPENROUTER_CONNECTION_ERROR';
+    let errorMessage = 'Failed to connect to Ollama AI';
+    let errorCode = 'OLLAMA_CONNECTION_ERROR';
 
-    if (err.message.includes('API key')) {
-      errorMessage = '❌ OpenRouter API key is invalid or missing.';
-      errorCode = 'API_KEY_INVALID';
-    } else if (err.message.includes('rate limit')) {
-      errorMessage = '❌ OpenRouter rate limit exceeded. Please try again later.';
-      errorCode = 'RATE_LIMIT_EXCEEDED';
+    if (err.message.includes('Ollama service is not running')) {
+      errorMessage = '❌ Ollama is not running. Please start Ollama and ensure it\'s accessible on port 11434.';
+      errorCode = 'OLLAMA_NOT_RUNNING';
+    } else if (err.message.includes('Model') && err.message.includes('not available')) {
+      errorMessage = err.message;
+      errorCode = 'MODEL_NOT_AVAILABLE';
     } else if (err.message.includes('timeout') || err.message.includes('network')) {
-      errorMessage = '❌ Network error connecting to OpenRouter. Please check your connection.';
+      errorMessage = '❌ Network error connecting to Ollama. Please check your connection.';
       errorCode = 'NETWORK_ERROR';
     }
 
@@ -206,8 +222,8 @@ app.post('/api/openai', validateOpenAIRequest, async (req, res) => {
   }
 });
 
-// Code Explaining Endpoint using OpenRouter API
-app.post('/api/explain-code', async (req, res) => {
+// Code Validation Endpoint using Ollama AI
+app.post('/api/validate-code', async (req, res) => {
   const { code, language } = req.body;
   const apiKey = process.env.OPENROUTER_API_KEY;
 
@@ -305,28 +321,24 @@ Explain it as if teaching someone who is learning JavaScript, using simple langu
 
     const enhancedMessages = [systemPrompt, ...messages];
 
-    console.log(`Sending ${language} code explanation request to OpenRouter API`);
+    console.log(`Sending ${language} code validation request to Ollama API`);
 
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    const response = await fetch('http://localhost:11434/api/chat', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-        'HTTP-Referer': 'https://code-understanding-app.com',
-        'X-Title': 'Code Understanding App'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'openai/gpt-4o',
+        model: 'gemma3:1b',
         messages: enhancedMessages,
-        max_tokens: 3000,
-        temperature: 0.3
+        stream: false
       })
     });
 
     if (!response.ok) {
       const responseText = await response.text();
-      console.log('OpenRouter API response body:', responseText);
-      throw new Error(`OpenRouter API error: ${response.status} ${response.statusText}`);
+      console.log('OpenAI API response body:', responseText);
+      throw new Error(`OpenAI API error: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
@@ -341,8 +353,8 @@ Explain it as if teaching someone who is learning JavaScript, using simple langu
   } catch (err) {
     console.error('Code explanation error:', err);
     res.status(500).json({
-      error: `Failed to explain code: ${err.message}. Make sure OpenRouter API key is configured.`,
-      code: 'EXPLANATION_ERROR'
+      error: `Failed to validate code: ${err.message}. Make sure OpenAI API key is configured.`,
+      code: 'VALIDATION_ERROR'
     });
   }
 });

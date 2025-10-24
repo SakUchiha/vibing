@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' http://localhost:4000 http://127.0.0.1:4000 http://localhost:4001 http://127.0.0.1:4001 ws://localhost:4000 ws://127.0.0.1:4000 ws://localhost:4001 ws://127.0.0.1:4001;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' http://localhost:4000 http://127.0.0.1:4000 ws://localhost:4000 ws://127.0.0.1:4000;">
   <title>OpenAI Assistant - KidLearner</title>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/ai-styles.css">
@@ -42,13 +42,13 @@
     <!-- Header Section -->
     <div class="ai-header">
       <h1><i class="fas fa-robot"></i> OpenAI Coding Assistant</h1>
-      <p>Get AI-powered help with HTML, CSS, and JavaScript using OpenAI's advanced models.</p>
+      <p>Get AI-powered help with HTML, CSS, and JavaScript using OpenAI models.</p>
 
       <!-- AI Provider Info -->
         <div class="ai-provider-info">
           <div class="ai-provider-banner">
             <i class="fas fa-server"></i>
-            <strong>OpenAI Assistant</strong> - Powered by OpenAI's advanced models
+            <strong>OpenAI Assistant</strong> - Powered by OpenAI models
           </div>
           <div class="ai-status-container">
             <div class="ai-status" id="aiStatus">
@@ -65,11 +65,9 @@
             <div class="model-selector">
               <label for="modelSelect">AI Model:</label>
               <select id="modelSelect" class="model-select">
-                <option value="gpt-4o" selected>GPT-4o (Recommended)</option>
-                <option value="gpt-4o-mini">GPT-4o Mini (Fast/Low cost)</option>
-                <option value="gpt-4">GPT-4 (Advanced)</option>
-                <option value="gpt-4-turbo-preview">GPT-4 Turbo (Fast)</option>
-                <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                <option value="gpt-3.5-turbo">GPT-3.5 Turbo (Default)</option>
+                <option value="gpt-4">GPT-4 (Better)</option>
+                <option value="gpt-4-turbo-preview">GPT-4 Turbo (Latest)</option>
               </select>
             </div>
             <div class="model-info" id="modelInfo">
