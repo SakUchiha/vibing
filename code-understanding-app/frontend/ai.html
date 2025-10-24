@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' http://localhost:4000 http://127.0.0.1:4000 ws://localhost:4000 ws://127.0.0.1:4000;">
-  <title>Ollama AI Assistant - KidLearner</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' http://localhost:4000 http://127.0.0.1:4000 http://localhost:4001 http://127.0.0.1:4001 ws://localhost:4000 ws://127.0.0.1:4000 ws://localhost:4001 ws://127.0.0.1:4001;">
+  <title>OpenAI Assistant - KidLearner</title>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/ai-styles.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -33,9 +33,6 @@
         <a href="ai.html" class="nav-link active">
           <i class="fas fa-robot"></i> AI Assistant
         </a>
-        <button class="theme-toggle" aria-label="Toggle theme" title="Toggle theme">
-          <i class="fas fa-moon"></i>
-        </button>
       </nav>
     </div>
   </header>
@@ -44,14 +41,14 @@
   <div class="ai-container">
     <!-- Header Section -->
     <div class="ai-header">
-      <h1><i class="fas fa-robot"></i> Ollama AI Coding Assistant</h1>
-      <p>Get AI-powered help with HTML, CSS, and JavaScript using local Ollama models.</p>
+      <h1><i class="fas fa-robot"></i> OpenAI Coding Assistant</h1>
+      <p>Get AI-powered help with HTML, CSS, and JavaScript using OpenAI's advanced models.</p>
 
       <!-- AI Provider Info -->
         <div class="ai-provider-info">
           <div class="ai-provider-banner">
             <i class="fas fa-server"></i>
-            <strong>Ollama AI Assistant</strong> - Powered by local AI models
+            <strong>OpenAI Assistant</strong> - Powered by OpenAI's advanced models
           </div>
           <div class="ai-status-container">
             <div class="ai-status" id="aiStatus">
@@ -68,10 +65,11 @@
             <div class="model-selector">
               <label for="modelSelect">AI Model:</label>
               <select id="modelSelect" class="model-select">
-                <option value="gemma3:1b">Gemma 3 1B (Default)</option>
-                <option value="llama3.2:1b">Llama 3.2 1B (Fast)</option>
-                <option value="llama3.2:3b">Llama 3.2 3B (Better)</option>
-                <option value="phi3:3.8b">Phi-3 3.8B (Best)</option>
+                <option value="gpt-4o" selected>GPT-4o (Recommended)</option>
+                <option value="gpt-4o-mini">GPT-4o Mini (Fast/Low cost)</option>
+                <option value="gpt-4">GPT-4 (Advanced)</option>
+                <option value="gpt-4-turbo-preview">GPT-4 Turbo (Fast)</option>
+                <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
               </select>
             </div>
             <div class="model-info" id="modelInfo">
@@ -96,7 +94,7 @@
             <div class="message-avatar">🤖</div>
             <div class="message-content">
               <div class="message-sender">AI Assistant</div>
-              <div class="message-text">👋 Hello! I'm your AI coding assistant. I can help you with HTML, CSS, and JavaScript questions, and I can validate your code. What would you like to learn today?</div>
+              <div class="message-text">👋 Hello! I'm your AI coding assistant. I can help you with HTML, CSS, and JavaScript questions, and I can explain your code step by step. What would you like to learn today?</div>
             </div>
           </div>
         </div>
@@ -105,7 +103,7 @@
             <textarea 
               id="chatInput" 
               class="chat-input" 
-              placeholder="Ask me about HTML, CSS, JavaScript, or request code validation (requires Ollama running locally)..."
+              placeholder="Ask me about HTML, CSS, JavaScript, or request code explanation..."
               rows="1"
             ></textarea>
             <button id="sendButton" class="send-button">
@@ -116,11 +114,11 @@
         </div>
       </div>
 
-      <!-- Code Validation Panel -->
+      <!-- Code Explanation Panel -->
       <div class="validation-container">
         <div class="validation-header">
-          <i class="fas fa-check-circle"></i>
-          <h3>Code Validator</h3>
+          <i class="fas fa-question-circle"></i>
+          <h3>Code Explainer</h3>
         </div>
         <div class="code-editor-container">
           <!-- Language Tabs -->
@@ -147,14 +145,14 @@ Example:
 <p>This is a paragraph.</p>"
           ></textarea>
 
-          <!-- Validate Button -->
+          <!-- Explain Button -->
           <button id="validateButton" class="validate-button">
-            <i class="fas fa-search"></i>
-            Validate Code
+            <i class="fas fa-question-circle"></i>
+            Explain Code
           </button>
         </div>
 
-        <!-- Validation Results -->
+        <!-- Explanation Results -->
         <div class="validation-results" id="validationResults">
           <!-- Results will be displayed here -->
         </div>
@@ -187,11 +185,11 @@ Example:
           </p>
         </div>
         <div class="tip-card is-validate">
-          <h4>🔍 Validate Code</h4>
+          <h4>🔍 Explain Code</h4>
           <p>
             Paste your code in the editor<br>
-            Click "Validate Code"<br>
-            Get instant feedback
+            Click "Explain Code"<br>
+            Get detailed explanations
           </p>
         </div>
         <div class="tip-card is-examples">
@@ -227,7 +225,7 @@ Example:
           <ul>
             <li><a href="editor.html">Code Editor</a></li>
             <li><a href="ai.html">AI Assistant</a></li>
-            <li><a href="editor.html">Auto-Run Mode</a></li>
+            <li><a href="code-explainer.html">Code Explainer</a></li>
           </ul>
         </div>
         <div class="footer-section">
@@ -257,7 +255,6 @@ Example:
   <script src="js/syntax-highlighter.js"></script>
   <script src="js/progress-tracker.js"></script>
   <script src="js/ai.js"></script>
-  <script src="js/theme.js"></script>
 
   <!-- Auto-resize textarea -->
   <script>

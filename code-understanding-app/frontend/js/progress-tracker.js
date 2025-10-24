@@ -9,7 +9,7 @@ class ProgressTracker {
       first_lesson: { name: 'First Steps', description: 'Completed your first lesson', icon: '🎯' },
       code_master: { name: 'Code Master', description: 'Completed 5 lessons', icon: '👑' },
       ai_helper: { name: 'AI Assistant', description: 'Asked AI for help 10 times', icon: '🤖' },
-      validator: { name: 'Code Validator', description: 'Validated code 20 times', icon: '✅' },
+      validator: { name: 'Code Explainer', description: 'Explained code 20 times', icon: '✅' },
       streak_7: { name: 'Week Warrior', description: '7-day learning streak', icon: '🔥' },
       editor_pro: { name: 'Editor Pro', description: 'Saved 10 code files', icon: '💾' }
     };
@@ -24,7 +24,14 @@ class ProgressTracker {
 
   getProgress() {
     try {
-      return JSON.parse(localStorage.getItem(this.storageKey)) || null;
+      const data = JSON.parse(localStorage.getItem(this.storageKey)) || null;
+      if (data) {
+        // Migrate old fields to new ones for backward compatibility
+        if (data.codeExplanations == null && typeof data.codeValidations === 'number') {
+          data.codeExplanations = data.codeValidations;
+        }
+      }
+      return data;
     } catch (e) {
       console.error('Error loading progress:', e);
       return null;
@@ -44,6 +51,7 @@ class ProgressTracker {
       lessonsCompleted: [],
       totalLessons: 0,
       aiInteractions: 0,
+      codeExplanations: 0,
       codeValidations: 0,
       filesSaved: 0,
       lastActiveDate: new Date().toISOString().split('T')[0],
@@ -75,10 +83,8 @@ class ProgressTracker {
   }
 
   incrementValidations() {
-    const progress = this.getProgress();
-    progress.codeValidations++;
-    this.checkAchievements(progress);
-    this.saveProgress(progress);
+    // Backward-compatible alias; prefer incrementExplanations()
+    this.incrementExplanations();
   }
 
   incrementFilesSaved() {
@@ -136,8 +142,9 @@ class ProgressTracker {
       newAchievements.push('ai_helper');
     }
 
-    // Validator achievement
-    if (progress.codeValidations >= 20 && !progress.achievements.includes('validator')) {
+    // Explainer achievement (was 'validator')
+    const explanations = (typeof progress.codeExplanations === 'number') ? progress.codeExplanations : (progress.codeValidations || 0);
+    if (explanations >= 20 && !progress.achievements.includes('validator')) {
       newAchievements.push('validator');
     }
 
@@ -174,7 +181,7 @@ class ProgressTracker {
     return {
       lessonsCompleted: progress.totalLessons,
       aiInteractions: progress.aiInteractions,
-      codeValidations: progress.codeValidations,
+      codeExplanations: (typeof progress.codeExplanations === 'number') ? progress.codeExplanations : (progress.codeValidations || 0),
       filesSaved: progress.filesSaved,
       currentStreak: progress.currentStreak,
       longestStreak: progress.longestStreak,
@@ -182,6 +189,16 @@ class ProgressTracker {
       totalAchievements: Object.keys(this.achievements).length,
       achievements: progress.achievements.map(id => this.achievements[id])
     };
+  }
+
+  incrementExplanations() {
+    const progress = this.getProgress();
+    if (typeof progress.codeExplanations !== 'number') {
+      progress.codeExplanations = progress.codeValidations || 0;
+    }
+    progress.codeExplanations++;
+    this.checkAchievements(progress);
+    this.saveProgress(progress);
   }
 
   addTimeSpent(minutes) {

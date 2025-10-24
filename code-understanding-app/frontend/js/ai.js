@@ -1,6 +1,6 @@
 /**
- * AI Assistant - Ollama-based implementation for web development questions
- * Uses local Ollama AI for HTML, CSS, and JavaScript assistance
+ * AI Assistant - OpenAI-based implementation for web development questions
+ * Uses OpenAI API for HTML, CSS, and JavaScript assistance
  */
 class AIAssistant {
   constructor() {
@@ -19,7 +19,7 @@ class AIAssistant {
     this.statusRefreshBtn = document.getElementById('statusRefreshBtn');
     this.modelSelect = document.getElementById('modelSelect');
     this.modelInfo = document.getElementById('modelInfo');
-    this.selectedModel = 'gemma3:1b';
+    this.selectedModel = 'gpt-4o';
 
     this.init();
   }
@@ -52,8 +52,8 @@ class AIAssistant {
       }
     });
 
-    // Code validation
-    this.validateButton.addEventListener('click', () => this.validateCode());
+    // Code explanation
+    this.validateButton.addEventListener('click', () => this.explainCode());
 
     // Language tabs
     this.languageTabs.forEach(tab => {
@@ -73,7 +73,7 @@ class AIAssistant {
   }
 
   addWelcomeMessage() {
-    this.addMessage('ai', '🤖 Hello! I\'m your Ollama AI coding assistant. I can help you with HTML, CSS, and JavaScript questions, and I can validate your code. What would you like to learn today?');
+    this.addMessage('ai', '🤖 Hello! I\'m your OpenAI coding assistant. I can help you with HTML, CSS, and JavaScript questions, and I can validate your code. What would you like to learn today?');
   }
 
   async sendMessage() {
@@ -86,112 +86,69 @@ class AIAssistant {
     // Show typing indicator
     this.showTypingIndicator();
 
-    // Process message with Ollama AI
-    await this.processWithOllama(message);
+    // Process message with OpenAI
+    await this.processWithOpenAI(message);
   }
 
   // Removed client-side AI processing methods
 
   // Removed client-side validation and example request handlers
 
-  async validateCode() {
+  async explainCode() {
     const code = this.codeEditor.value.trim();
     if (!code) {
-      this.showValidationResult('Please enter some code to validate.', 'info');
+      this.showExplanationResult('Please enter some code to explain.', 'info');
       return;
     }
 
     uiManager.setButtonLoading('validateButton', true, 'Analyzing...');
 
     try {
-      // First try AI-powered validation
-      const aiValidation = await this.validateWithAI(code, this.currentLanguage);
+      // Get AI-powered explanation
+      const aiExplanation = await this.explainWithAI(code, this.currentLanguage);
 
-      if (aiValidation) {
-        this.displayAIAnalysis(aiValidation);
+      if (aiExplanation) {
+        this.displayAIExplanation(aiExplanation);
       } else {
-        // Fallback to basic syntax checking
-        this.fallbackValidation(code);
+        // Fallback message
+        this.showExplanationResult('Unable to generate explanation. Please try again.', 'error');
       }
 
-      // Track validation for progress
+      // Track explanation for progress
       if (window.progressTracker) {
-        window.progressTracker.incrementValidations();
+        window.progressTracker.incrementValidations(); // Reuse validation counter for now
       }
 
     } catch (error) {
-      console.error('Validation error:', error);
-      uiManager.showError('Code validation failed. Please try again.', () => this.validateCode());
-      this.fallbackValidation(code);
+      console.error('Explanation error:', error);
+      uiManager.showError('Code explanation failed. Please try again.', () => this.explainCode());
+      this.showExplanationResult('Unable to explain code. Please check your connection and try again.', 'error');
     } finally {
       uiManager.setButtonLoading('validateButton', false);
     }
   }
 
-  async validateWithAI(code, language) {
+  async explainWithAI(code, language) {
     try {
-      const response = await apiService.post('/api/validate-code', {
+      const response = await apiService.post('/api/explain-code', {
         code: code,
         language: language
       });
 
       return response;
     } catch (error) {
-      console.warn('AI validation failed, falling back to basic validation:', error);
+      console.warn('AI explanation failed:', error);
       return null;
     }
   }
 
-  displayAIAnalysis(analysis) {
-    let html = '<div class="ai-validation-results">';
+  displayAIExplanation(explanation) {
+    let html = '<div class="ai-explanation-results">';
 
-    // Errors section
-    if (analysis.analysis.errors && analysis.analysis.errors.length > 0) {
-      html += '<div class="validation-section errors">';
-      html += '<h4>❌ Issues Found:</h4>';
-      analysis.analysis.errors.forEach(error => {
-        html += `<div class="validation-item error">${error}</div>`;
-      });
-      html += '</div>';
-    }
-
-    // Warnings section
-    if (analysis.analysis.warnings && analysis.analysis.warnings.length > 0) {
-      html += '<div class="validation-section warnings">';
-      html += '<h4>⚠️ Warnings:</h4>';
-      analysis.analysis.warnings.forEach(warning => {
-        html += `<div class="validation-item warning">${warning}</div>`;
-      });
-      html += '</div>';
-    }
-
-    // Suggestions section
-    if (analysis.analysis.suggestions && analysis.analysis.suggestions.length > 0) {
-      html += '<div class="validation-section suggestions">';
-      html += '<h4>💡 Suggestions:</h4>';
-      analysis.analysis.suggestions.forEach(suggestion => {
-        html += `<div class="validation-item suggestion">${suggestion}</div>`;
-      });
-      html += '</div>';
-    }
-
-    // Best practices section
-    if (analysis.analysis.bestPractices && analysis.analysis.bestPractices.length > 0) {
-      html += '<div class="validation-section best-practices">';
-      html += '<h4>✨ Best Practices:</h4>';
-      analysis.analysis.bestPractices.forEach(practice => {
-        html += `<div class="validation-item best-practice">${practice}</div>`;
-      });
-      html += '</div>';
-    }
-
-    // If no issues found
-    if ((!analysis.analysis.errors || analysis.analysis.errors.length === 0) &&
-        (!analysis.analysis.warnings || analysis.analysis.warnings.length === 0) &&
-        (!analysis.analysis.suggestions || analysis.analysis.suggestions.length === 0) &&
-        (!analysis.analysis.bestPractices || analysis.analysis.bestPractices.length === 0)) {
-      html += '<div class="validation-success">✅ Your code looks good! No major issues detected.</div>';
-    }
+    // Main explanation content
+    html += '<div class="explanation-content">';
+    html += `<div class="explanation-text">${this.formatResponse(explanation.explanation)}</div>`;
+    html += '</div>';
 
     html += '</div>';
     this.validationResults.innerHTML = html;
@@ -249,8 +206,8 @@ class AIAssistant {
     this.validationResults.innerHTML = html;
   }
 
-  showValidationResult(message, type = 'info') {
-    this.validationResults.innerHTML = `<div class="validation-${type}">${message}</div>`;
+  showExplanationResult(message, type = 'info') {
+    this.validationResults.innerHTML = `<div class="explanation-${type}">${message}</div>`;
   }
 
   switchLanguage(language) {
@@ -322,7 +279,7 @@ class AIAssistant {
         }, 100);
       }
 
-      this.addMessage('ai', `I've loaded the "${title}" example into the code editor. Try modifying it and then click "Validate Code" to check for any issues!`);
+      this.addMessage('ai', `I've loaded the "${title}" example into the code editor. Try modifying it and then click "Explain Code" to check for any issues!`);
     }
   }
 
@@ -372,6 +329,9 @@ class AIAssistant {
   }
 
   formatResponse(text) {
+    // Normalize casing first
+    text = this.normalizeResponseCase(text);
+
     // Convert markdown-style code blocks to HTML
     text = text.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
       return `<pre><code class="language-${lang || 'text'}">${this.escapeHtml(code.trim())}</code></pre>`;
@@ -392,6 +352,25 @@ class AIAssistant {
     return div.innerHTML;
   }
 
+  // Normalize inconsistent casing from AI responses (heuristic)
+  normalizeResponseCase(text) {
+    if (!text || typeof text !== 'string') return text;
+
+    // If text looks like shouty/all-caps (excluding code blocks), downcase then sentence-case
+    const withoutCode = text.replace(/```[\s\S]*?```/g, '');
+    const letters = withoutCode.replace(/[^A-Za-z]/g, '');
+    const upperCount = (letters.match(/[A-Z]/g) || []).length;
+    const ratio = letters.length ? upperCount / letters.length : 0;
+
+    if (ratio > 0.6) {
+      const lowered = text.toLowerCase();
+      return lowered.replace(/(^\s*[a-z])|([.!?]\s*[a-z])/g, (m) => m.toUpperCase());
+    }
+
+    // Otherwise, ensure first sentence starts with capital
+    return text.replace(/(^\s*[a-z])/, (m) => m.toUpperCase());
+  }
+
   // Model selection methods
   onModelChange(model) {
     this.selectedModel = model;
@@ -400,10 +379,11 @@ class AIAssistant {
 
   updateModelInfo() {
     const modelInfos = {
-      'gemma3:1b': 'Fast, good quality responses',
-      'llama3.2:1b': 'Fastest, good for quick answers',
-      'llama3.2:3b': 'Better quality, moderate speed',
-      'phi3:3.8b': 'Best quality, slower responses'
+      'gpt-3.5-turbo': 'Fast, budget-friendly',
+      'gpt-4': 'High quality, slower',
+      'gpt-4-turbo-preview': 'Fast GPT-4, good balance',
+      'gpt-4o': 'Multimodal, high quality and speed',
+      'gpt-4o-mini': 'Fastest and lowest cost'
     };
 
     if (this.modelInfo) {
@@ -416,33 +396,24 @@ class AIAssistant {
   showModelSuggestion(suggestion) {
     const message = `💡 **Model Suggestion:** ${suggestion}
 
-To get the best AI experience, run this command in your terminal:
-\`\`\`bash
-ollama pull gemma3:1b
-\`\`\`
-
-This will download a fast, high-quality AI model for coding assistance.`;
+To get the best AI experience, make sure your OpenRouter API key is configured in the backend .env file.`;
 
     this.addMessage('ai', message);
   }
 
   showSetupSuggestion(suggestions) {
-    let message = `🚀 **Setup Required:** AI assistant needs Ollama to work.
+    let message = `🚀 **Setup Required:** AI assistant needs OpenRouter API key to work.
 
 **Quick Setup Steps:**
-1. **Download Ollama:** https://ollama.ai/download
-2. **Install and run:** \`ollama serve\`
-3. **Download a model:** \`ollama pull gemma3:1b\`
+1. **Get OpenRouter API key:** https://openrouter.ai/
+2. **Add to backend .env file:** OPENROUTER_API_KEY=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
+3. **Restart the server**
 
-**Why Ollama?**
-• Runs locally on your computer
-• No internet required for responses
-• Privacy-focused (your code stays local)
-• Works offline
-
-**Alternative Models:**
-• \`ollama pull llama3.2:1b\` (fastest)
-• \`ollama pull llama3.2:3b\` (better quality)
+**Why OpenRouter?**
+• Access to multiple AI models
+• Competitive pricing
+• Easy API integration
+• High reliability
 
 Once setup is complete, refresh this page to start chatting with AI! 🤖`;
 
@@ -457,21 +428,12 @@ Once setup is complete, refresh this page to start chatting with AI! 🤖`;
       this.aiStatus.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Checking AI status...';
       this.aiStatus.className = 'ai-status checking';
 
-      const response = await apiService.get('/api/ollama/health');
+      const response = await apiService.get('/api/openai/health');
 
       if (response.status === 'healthy') {
-        const modelCount = response.availableModels.length;
-        const recommendedCount = response.installedRecommended.length;
-        this.aiStatus.innerHTML = `<i class="fas fa-check-circle"></i> AI Ready (${modelCount} models)`;
+        this.aiStatus.innerHTML = `<i class="fas fa-check-circle"></i> AI Ready`;
         this.aiStatus.className = 'ai-status healthy';
-        this.aiStatus.title = `Available models: ${response.availableModels.join(', ')}`;
-
-        // Show model download suggestions if no recommended models
-        if (recommendedCount === 0 && response.suggestions.length > 0) {
-          setTimeout(() => {
-            this.showModelSuggestion(response.suggestions[0]);
-          }, 2000);
-        }
+        this.aiStatus.title = `OpenRouter API configured and ready`;
       } else {
         this.aiStatus.innerHTML = '<i class="fas fa-times-circle"></i> AI Unavailable';
         this.aiStatus.className = 'ai-status unhealthy';
@@ -492,7 +454,7 @@ Once setup is complete, refresh this page to start chatting with AI! 🤖`;
     }
   }
 
-  // Fallback responses for common questions when Ollama is unavailable
+  // Fallback responses for common questions when AI is unavailable
   getFallbackResponse(message) {
     const lowerMessage = message.toLowerCase().trim();
 
@@ -651,7 +613,7 @@ Functions help organize your code into reusable blocks!`;
 
 3. **SyntaxError**: Invalid syntax
    - Missing semicolons, brackets, quotes
-   - Use the code validator to check
+   - Use the code explainer to check
 
 **Debugging Steps:**
 1. Check browser console (F12 → Console)
@@ -669,7 +631,7 @@ let myVariable = "Hello";
 console.log(myVariable); // "Hello"
 \`\`\`
 
-Try the code validator to catch errors before running!`;
+Try the code explainer to catch errors before running!`;
     }
 
     // Generic fallback for other questions
@@ -718,11 +680,11 @@ Keep practicing - you'll get the hang of it! 🚀`;
 
   // Removed provider switching functionality
 
-  async processWithOllama(message) {
+  async processWithOpenAI(message) {
     try {
       uiManager.setButtonLoading('sendButton', true, 'Thinking...');
 
-      const response = await apiService.post('/api/ollama', {
+      const response = await apiService.post('/api/openai', {
         messages: [{role: 'user', content: message}],
         model: this.selectedModel
       });
@@ -741,80 +703,72 @@ Keep practicing - you'll get the hang of it! 🚀`;
     } catch (error) {
       uiManager.setButtonLoading('sendButton', false);
       this.hideTypingIndicator();
-      console.error('Ollama API error:', error);
+      console.error('OpenRouter API error:', error);
 
       // Enhanced error handling with detailed guidance
       let userMessage = CONFIG.MESSAGES.AI_UNAVAILABLE;
       let suggestions = [];
 
-      if (error.message.includes('Ollama service is not running') || error.message.includes('11434')) {
-        userMessage = `❌ Ollama AI is not available. Here's how to fix it:
+      if (error.message.includes('API key') || error.message.includes('API_KEY')) {
+        userMessage = `❌ OpenRouter API key is not configured. Here's how to fix it:
 
 **Quick Setup:**
-1. Download Ollama: https://ollama.ai/download
-2. Install and run: \`ollama serve\`
-3. Pull a model: \`ollama pull gemma3:1b\`
+1. Get API key from: https://openrouter.ai/
+2. Add to backend .env file: OPENROUTER_API_KEY=your_key_here
+3. Restart the server
 4. Refresh this page
-
-**Alternative Models:**
-• \`ollama pull llama3.2:1b\` (fast)
-• \`ollama pull llama3.2:3b\` (better quality)
 
 **Need Help?** Check the README.md for detailed setup instructions.`;
         suggestions = [
-          'Download Ollama from https://ollama.ai',
-          'Run: ollama serve',
-          'Run: ollama pull gemma3:1b',
+          'Get OpenRouter API key from https://openrouter.ai/',
+          'Add OPENROUTER_API_KEY to .env file',
+          'Restart the server',
           'Refresh this page'
         ];
-      } else if (error.message.includes('Model') && error.message.includes('not available')) {
-        const availableModels = error.message.match(/Available models: (.+)/)?.[1] || '';
-        userMessage = `❌ The requested AI model is not available.
+      } else if (error.message.includes('rate limit')) {
+        userMessage = `❌ OpenRouter rate limit exceeded.
 
-**Available models:** ${availableModels || 'none found'}
+**What to do:**
+• Wait a few minutes before trying again
+• Check your OpenRouter account limits
+• Consider upgrading your plan if needed
 
-**Recommended actions:**
-• Pull gemma3:1b: \`ollama pull gemma3:1b\`
-• Pull llama3.2:1b: \`ollama pull llama3.2:1b\`
-• Check installed models: \`ollama list\`
-
-**Why this matters:** Different models offer different speeds and capabilities.`;
+**Rate limits help ensure fair usage for all users.`;
         suggestions = [
-          'Run: ollama pull gemma3:1b',
-          'Run: ollama pull llama3.2:1b',
-          'Check: ollama list'
+          'Wait a few minutes',
+          'Check OpenRouter account limits',
+          'Consider upgrading plan'
         ];
       } else if (error.message.includes('timeout') || error.message.includes('network')) {
-        userMessage = `❌ Network error connecting to Ollama.
+        userMessage = `❌ Network error connecting to OpenRouter.
 
 **Troubleshooting:**
-• Ensure Ollama is running: \`ollama serve\`
-• Check port 11434 is not blocked
-• Try restarting Ollama service
-• Check firewall settings
+• Check your internet connection
+• Try again in a few moments
+• Contact support if issues persist
 
-**Status check:** Visit http://localhost:11434/api/tags in your browser.`;
+**OpenRouter provides reliable AI access through multiple providers.`;
         suggestions = [
-          'Check if Ollama is running',
-          'Verify port 11434 is accessible',
-          'Restart Ollama service'
+          'Check internet connection',
+          'Try again in a few moments',
+          'Contact OpenRouter support if needed'
         ];
       } else {
         userMessage = `❌ AI Assistant Error: ${error.message}
 
 **General troubleshooting:**
-• Restart the KidLearner server
-• Check Ollama is running on port 11434
+• Restart the server
+• Check OpenRouter API key is valid
 • Try refreshing the page
 • Check browser console for details`;
         suggestions = [
-          'Restart KidLearner server',
-          'Check Ollama status',
+          'Restart server',
+          'Verify API key',
           'Refresh the page'
         ];
       }
 
-      // Try fallback responses for common questions when Ollama is unavailable
+      // Try fallback responses for common questions when AI is unavailable
       const fallbackResponse = this.getFallbackResponse(message);
       if (fallbackResponse) {
         this.addMessage('ai', fallbackResponse);
@@ -822,7 +776,7 @@ Keep practicing - you'll get the hang of it! 🚀`;
       }
 
       this.addMessage('ai', userMessage);
-      uiManager.showError(userMessage, () => this.processWithOllama(message));
+      uiManager.showError(userMessage, () => this.processWithOpenAI(message));
     }
   }
 }

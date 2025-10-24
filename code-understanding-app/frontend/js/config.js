@@ -1,8 +1,11 @@
 // Configuration file for KidLearner application
 const CONFIG = {
-  // API endpoints - will be configurable based on environment
+  // API endpoints - configurable based on environment
   API_BASE_URL: (['localhost', '127.0.0.1'].includes(window.location.hostname)
     ? `http://${window.location.hostname}:4000`
+    : window.location.origin),
+  API_BASE_URL_ALT: (['localhost', '127.0.0.1'].includes(window.location.hostname)
+    ? `http://${window.location.hostname}:4001`
     : window.location.origin),
   FRONTEND_BASE_URL: window.location.origin,
 

@@ -36,8 +36,8 @@ class AIChatOnly {
     // Show typing indicator
     this.showTypingIndicator();
 
-    // Process message with Ollama AI
-    await this.processWithOllama(message);
+    // Process message with OpenAI via OpenRouter
+    await this.processWithOpenAI(message);
   }
 
   addMessage(sender, content) {
@@ -106,13 +106,13 @@ class AIChatOnly {
     return div.innerHTML;
   }
 
-  async processWithOllama(message) {
+  async processWithOpenAI(message) {
     try {
       uiManager.setButtonLoading('sendButton', true, 'Thinking...');
 
-      const response = await apiService.post('/api/ollama', {
+      const response = await apiService.post('/api/openai', {
         messages: [{role: 'user', content: message}],
-        model: 'gemma3:1b' // Default model, can be configured
+        model: 'openai/gpt-4o' // Upgraded to GPT-4o for better performance
       });
 
       uiManager.setButtonLoading('sendButton', false);
@@ -129,19 +129,19 @@ class AIChatOnly {
     } catch (error) {
       uiManager.setButtonLoading('sendButton', false);
       this.hideTypingIndicator();
-      console.error('Ollama API error:', error);
+      console.error('OpenRouter API error:', error);
 
       // Enhanced error handling with fallback suggestions
       let userMessage = CONFIG.MESSAGES.AI_UNAVAILABLE;
 
-      if (error.message.includes('Ollama') || error.message.includes('11434')) {
-        userMessage = `❌ Ollama AI is not available. Please ensure Ollama is running locally on port 11434. You can download Ollama from https://ollama.ai`;
+      if (error.message.includes('API key') || error.message.includes('API_KEY')) {
+        userMessage = `❌ OpenRouter API key is not configured. Please add OPENROUTER_API_KEY to the backend .env file. Get your key from https://openrouter.ai/`;
       } else if (error.message.includes('timeout') || error.message.includes('network')) {
         userMessage = `❌ Network error. ${CONFIG.MESSAGES.NETWORK_ERROR}`;
       }
 
       this.addMessage('ai', userMessage);
-      uiManager.showError(userMessage, () => this.processWithOllama(message));
+      uiManager.showError(userMessage, () => this.processWithOpenAI(message));
     }
   }
 }

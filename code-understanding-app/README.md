@@ -6,7 +6,7 @@ A modern, interactive web development learning platform designed to teach HTML, 
 
 - 🎯 **Interactive Lessons**: Step-by-step tutorials with hands-on coding exercises
 - ⚡ **Auto-Run Mode**: See your code execute in real-time as you type
-- 🤖 **AI Assistant**: Get instant help and explanations from our intelligent coding tutor powered by Ollama
+- 🤖 **AI Assistant**: Get instant help and explanations from our intelligent coding tutor powered by OpenAI
 - 💻 **Live Editor**: Practice coding with our built-in editor that supports HTML, CSS, and JavaScript
 - 📊 **Progress Tracking**: Track your learning journey and see how you improve over time
 - 📱 **Responsive Design**: Learn on any device - desktop, tablet, or mobile
@@ -16,7 +16,7 @@ A modern, interactive web development learning platform designed to teach HTML, 
 ### Prerequisites
 
 - Node.js (version 14 or higher)
-- Ollama (for AI Assistant functionality)
+- OpenAI API key (for AI Assistant functionality)
 - A modern web browser
 
 ### Installation
@@ -47,84 +47,46 @@ A modern, interactive web development learning platform designed to teach HTML, 
 1. Double-click `start-app.bat` to automatically install dependencies and start the server
 2. Open `frontend/index.html` in your browser
 
-## Ollama AI Assistant Setup
+## OpenAI AI Assistant Setup
 
-The AI Assistant requires Ollama to be installed and running locally. Follow these steps to set it up:
+The AI Assistant requires an OpenAI API key to function. Follow these steps to set it up:
 
-### 1. Install Ollama
+### 1. Get an OpenAI API Key
 
-**macOS:**
-```bash
-brew install ollama
-```
+1. Visit [OpenAI Platform](https://platform.openai.com/)
+2. Sign up or log in to your account
+3. Navigate to API Keys section
+4. Create a new API key
+5. Copy the API key (it starts with `sk-`)
 
-**Windows:**
-Download from https://ollama.ai/download and run the installer.
+### 2. Configure the API Key
 
-**Linux:**
-```bash
-curl -fsSL https://ollama.ai/install.sh | sh
-```
+Add your OpenAI API key to the backend configuration:
 
-### 2. Start Ollama Service
+1. Create a `.env` file in the `backend/server.js/` directory
+2. Add the following lines:
+   ```
+   OPENROUTER_API_KEY=foll
+   PORT=4000
+   ```
 
-```bash
-ollama serve
-```
+### 3. Verify Configuration
 
-This starts Ollama on `http://localhost:11434`.
+The server will automatically load the API key from the `.env` file when it starts. Make sure the key is properly set before using the AI Assistant features.
 
-### 3. Download Required Models
-
-Download the recommended models for best performance:
-
-```bash
-# Primary model (fast and good quality)
-ollama pull gemma3:1b
-
-# Alternative models (if you prefer different sizes/speeds)
-ollama pull llama3.2:1b    # Fast, good quality
-ollama pull llama3.2:3b    # Better quality, slower
-ollama pull phi3:3.8b      # Good balance
-```
-
-### 4. Verify Installation
-
-Check if Ollama is running and models are available:
-
-```bash
-# Check service status
-curl http://localhost:11434/api/tags
-
-# Test a simple chat
-ollama run gemma3:1b "Hello, test message"
-```
-
-### 5. Troubleshooting Ollama
-
-**If Ollama won't start:**
-- Make sure port 11434 is not blocked by firewall
-- Try `ollama serve` in a new terminal
-- Check if another instance is already running
-
-**If models won't download:**
-- Ensure you have a stable internet connection
-- Try pulling smaller models first: `ollama pull llama3.2:1b`
+### 4. Troubleshooting AI (OpenRouter)
 
 **If AI Assistant shows "unavailable":**
-- Verify Ollama is running: `curl http://localhost:11434/api/tags`
-- Check that required models are pulled
-- Restart the KidLearner backend server
+- Verify your `OPENROUTER_API_KEY` is correctly set in the `.env` file
+- Ensure you have credits with your chosen provider via OpenRouter
+- Ensure the backend server is running on port 4000 (or 4001 fallback)
 - Check browser console for detailed error messages
 
-### Model Recommendations
-
-| Model | Size | Speed | Quality | Use Case |
-|-------|------|-------|---------|----------|
-| `gemma3:1b` | ~1.5GB | Fastest | Good | Default, best balance |
-| `llama3.2:1b` | ~1.3GB | Fast | Good | Alternative default |
-| `llama3.2:3b` | ~2GB | Medium | Better | More detailed responses |
-| `phi3:3.8b` | ~2.3GB | Medium | Best | Most comprehensive |
+**Common AI Issues:**
+- **"Invalid API key"**: Double-check `OPENROUTER_API_KEY` in your `.env`
+- **"Insufficient credits"**: Add credits or choose a different model
+- **"Rate limit exceeded"**: Wait a few minutes before trying again
+- **Network errors**: Check your internet connection
 
 ## How to Use
 
@@ -142,7 +104,7 @@ ollama run gemma3:1b "Hello, test message"
 - Click on "AI Assistant" for instant help with coding questions
 - Ask about HTML, CSS, JavaScript concepts
 - Get debugging assistance and best practices
-- The AI uses local Ollama models - no internet required for responses
+- The AI uses OpenAI's cloud models - internet connection required
 
 ### 4. Study Guide
 - Access the comprehensive study guide for quick reference
@@ -179,7 +141,7 @@ code-understanding-app/
 
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
 - **Backend**: Node.js, Express.js
-- **AI**: Ollama with local language models
+- **AI**: OpenAI API with cloud language models
 - **Styling**: Custom CSS with modern design principles
 - **Icons**: Font Awesome
 - **Data**: JSON-based lesson storage
@@ -199,11 +161,11 @@ code-understanding-app/
 - Responsive design that works on all devices
 
 ### AI Assistant
-- Powered by Ollama local AI models
+- Powered by OpenAI cloud AI models
 - Context-aware help for HTML, CSS, and JavaScript
 - Code validation and debugging assistance
 - Chat-like interface for easy interaction
-- Privacy-focused - all processing happens locally
+- Cloud-based processing for reliable responses
 
 ### Study Guide
 - Comprehensive reference for HTML tags, CSS properties, and JavaScript concepts
@@ -253,18 +215,18 @@ code-understanding-app/
 - Try opening the HTML files directly in your browser
 
 ### AI Assistant Not Working
-- **First, ensure Ollama is installed and running** (see Ollama Setup section above)
-- Check that required models are downloaded: `ollama list`
-- Verify Ollama service: `curl http://localhost:11434/api/tags`
+- **First, ensure your OpenAI API key is configured** (see OpenAI Setup section above)
+- Check that you have credits in your OpenAI account
+- Verify the API key is correctly set in the `.env` file
 - Check browser console for any JavaScript errors
 - Make sure the backend server is running on port 4000
-- Try restarting both Ollama and the KidLearner server
+- Try restarting the KidLearner server
 
-### Common Ollama Issues
-- **"Connection refused"**: Ollama service not running - run `ollama serve`
-- **"Model not found"**: Download the model - `ollama pull gemma3:1b`
-- **"Port 11434 blocked"**: Check firewall settings
-- **Slow responses**: Try a smaller model like `llama3.2:1b`
+### Common OpenAI Issues
+- **"Invalid API key"**: Double-check the key in your `.env` file
+- **"Insufficient credits"**: Add credits to your OpenAI account
+- **"Rate limit exceeded"**: Wait a few minutes before trying again
+- **Network errors**: Check your internet connection
 
 ## Contributing
 

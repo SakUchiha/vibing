@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' http://localhost:4000 http://127.0.0.1:4000 ws://localhost:4000 ws://127.0.0.1:4000;">
-  <title>Code Validator - KidLearner</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' http://localhost:4000 http://127.0.0.1:4000 http://localhost:4001 http://127.0.0.1:4001 ws://localhost:4000 ws://127.0.0.1:4000 ws://localhost:4001 ws://127.0.0.1:4001;">
+  <title>Code Explainer - KidLearner</title>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/ai-styles.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -33,35 +33,32 @@
         <a href="ask-ai.html" class="nav-link">
           <i class="fas fa-robot"></i> Ask AI
         </a>
-        <a href="code-validator.html" class="nav-link active">
-          <i class="fas fa-check-circle"></i> Code Validator
+        <a href="code-explainer.html" class="nav-link active">
+          <i class="fas fa-question-circle"></i> Code Explainer
         </a>
-        <button class="theme-toggle" aria-label="Toggle theme" title="Toggle theme">
-          <i class="fas fa-moon"></i>
-        </button>
       </nav>
     </div>
   </header>
 
-  <!-- Code Validator Container -->
+  <!-- Code Explainer Container -->
   <div class="ai-container">
     <!-- Header Section -->
     <div class="ai-header">
-      <h1><i class="fas fa-check-circle"></i> AI Code Validator</h1>
-      <p>Get AI-powered code validation and suggestions for HTML, CSS, and JavaScript using local Ollama models.</p>
+      <h1><i class="fas fa-question-circle"></i> AI Code Explainer</h1>
+      <p>Get AI-powered code explanations and step-by-step breakdowns for HTML, CSS, and JavaScript using OpenAI's advanced models.</p>
 
       <!-- AI Provider Info -->
       <div class="ai-provider-info">
         <div class="ai-provider-banner">
           <i class="fas fa-server"></i>
-          <strong>Ollama AI Validator</strong> - Powered by local AI models
+          <strong>OpenAI Code Explainer</strong> - Powered by OpenAI's advanced models
         </div>
       </div>
     </div>
 
-    <!-- Code Validation Interface -->
-    <div class="validation-fullscreen">
-      <div class="validation-container">
+    <!-- Code Explainer Interface -->
+    <div class="Explainer">
+      <div class="Explainer-container">
         <div class="code-editor-container">
           <!-- Language Tabs -->
           <div class="language-tabs">
@@ -87,14 +84,14 @@ Example:
 <p>This is a paragraph.</p>"
           ></textarea>
 
-          <!-- Validate Button -->
+          <!-- Explain Button -->
           <button id="validateButton" class="validate-button">
-            <i class="fas fa-search"></i>
-            Validate Code
+            <i class="fas fa-question-circle"></i>
+            Explain Code
           </button>
         </div>
 
-        <!-- Validation Results -->
+        <!-- Explanation Results -->
         <div class="validation-results" id="validationResults">
           <!-- Results will be displayed here -->
         </div>
@@ -119,11 +116,11 @@ Example:
       </h3>
       <div class="quick-help-grid">
         <div class="tip-card is-validate">
-          <h4>🔍 Validate Code</h4>
+          <h4>🔍 Explain Code</h4>
           <p>
             Select your language<br>
             Paste your code in the editor<br>
-            Click "Validate Code"
+            Click "Explain Code"
           </p>
         </div>
         <div class="tip-card is-examples">
@@ -135,11 +132,11 @@ Example:
           </p>
         </div>
         <div class="tip-card is-validate">
-          <h4>💡 Get Suggestions</h4>
+          <h4>💡 Learn Step by Step</h4>
           <p>
-            Review AI feedback<br>
-            Apply best practices<br>
-            Improve your code
+            Read detailed explanations<br>
+            Understand each part<br>
+            Learn programming concepts
           </p>
         </div>
       </div>
@@ -167,7 +164,7 @@ Example:
           <ul>
             <li><a href="editor.html">Code Editor</a></li>
             <li><a href="ask-ai.html">Ask AI</a></li>
-            <li><a href="code-validator.html">Code Validator</a></li>
+            <li><a href="code-explainer.html">Code Explainer</a></li>
           </ul>
         </div>
         <div class="footer-section">
@@ -196,8 +193,7 @@ Example:
   <script src="js/error-handler.js"></script>
   <script src="js/syntax-highlighter.js"></script>
   <script src="js/progress-tracker.js"></script>
-  <script src="js/ai-validator-only.js"></script>
-  <script src="js/theme.js"></script>
+  <script src="js/ai-explainer-only.js"></script>
 
   <!-- Auto-resize code editor -->
   <script>

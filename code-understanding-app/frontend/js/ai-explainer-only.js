@@ -1,10 +1,11 @@
 /**
- * AI Validator Only - Code validation interface for Code Validator page
+ * AI Explainer Only - Code validation interface for Code Explainer page
  * Handles only the code validation functionality without chat
  */
 class AIValidatorOnly {
   constructor() {
     this.codeEditor = document.getElementById('codeEditor');
+    this.explainButton = document.getElementById('explainButton');
     this.validateButton = document.getElementById('validateButton');
     this.validationResults = document.getElementById('validationResults');
     this.examplesContent = document.getElementById('examplesContent');
@@ -21,8 +22,8 @@ class AIValidatorOnly {
   }
 
   setupEventListeners() {
-    // Code validation
-    this.validateButton.addEventListener('click', () => this.validateCode());
+    // Code explanation
+    this.validateButton.addEventListener('click', () => this.explainCode());
 
     // Language tabs
     this.languageTabs.forEach(tab => {
@@ -30,104 +31,61 @@ class AIValidatorOnly {
     });
   }
 
-  async validateCode() {
+  async explainCode() {
     const code = this.codeEditor.value.trim();
     if (!code) {
-      this.showValidationResult('Please enter some code to validate.', 'info');
+      this.showExplanationResult('Please enter some code to explain.', 'info');
       return;
     }
 
     uiManager.setButtonLoading('validateButton', true, 'Analyzing...');
 
     try {
-      // First try AI-powered validation
-      const aiValidation = await this.validateWithAI(code, this.currentLanguage);
+      // Get AI-powered explanation
+      const aiExplanation = await this.explainWithAI(code, this.currentLanguage);
 
-      if (aiValidation) {
-        this.displayAIAnalysis(aiValidation);
+      if (aiExplanation) {
+        this.displayAIExplanation(aiExplanation);
       } else {
-        // Fallback to basic syntax checking
-        this.fallbackValidation(code);
+        // Fallback message
+        this.showExplanationResult('Unable to generate explanation. Please try again.', 'error');
       }
 
-      // Track validation for progress
+      // Track explanation for progress
       if (window.progressTracker) {
-        window.progressTracker.incrementValidations();
+        window.progressTracker.incrementValidations(); // Reuse validation counter for now
       }
 
     } catch (error) {
-      console.error('Validation error:', error);
-      uiManager.showError('Code validation failed. Please try again.', () => this.validateCode());
-      this.fallbackValidation(code);
+      console.error('Explanation error:', error);
+      uiManager.showError('Code explanation failed. Please try again.', () => this.explainCode());
+      this.showExplanationResult('Unable to explain code. Please check your connection and try again.', 'error');
     } finally {
       uiManager.setButtonLoading('validateButton', false);
     }
   }
 
-  async validateWithAI(code, language) {
+  async explainWithAI(code, language) {
     try {
-      const response = await apiService.post('/api/validate-code', {
+      const response = await apiService.post('/api/explain-code', {
         code: code,
         language: language
       });
 
       return response;
     } catch (error) {
-      console.warn('AI validation failed, falling back to basic validation:', error);
+      console.warn('AI explanation failed:', error);
       return null;
     }
   }
 
-  displayAIAnalysis(analysis) {
-    let html = '<div class="ai-validation-results">';
+  displayAIExplanation(explanation) {
+    let html = '<div class="ai-explanation-results">';
 
-    // Errors section
-    if (analysis.analysis.errors && analysis.analysis.errors.length > 0) {
-      html += '<div class="validation-section errors">';
-      html += '<h4>❌ Issues Found:</h4>';
-      analysis.analysis.errors.forEach(error => {
-        html += `<div class="validation-item error">${error}</div>`;
-      });
-      html += '</div>';
-    }
-
-    // Warnings section
-    if (analysis.analysis.warnings && analysis.analysis.warnings.length > 0) {
-      html += '<div class="validation-section warnings">';
-      html += '<h4>⚠️ Warnings:</h4>';
-      analysis.analysis.warnings.forEach(warning => {
-        html += `<div class="validation-item warning">${warning}</div>`;
-      });
-      html += '</div>';
-    }
-
-    // Suggestions section
-    if (analysis.analysis.suggestions && analysis.analysis.suggestions.length > 0) {
-      html += '<div class="validation-section suggestions">';
-      html += '<h4>💡 Suggestions:</h4>';
-      analysis.analysis.suggestions.forEach(suggestion => {
-        html += `<div class="validation-item suggestion">${suggestion}</div>`;
-      });
-      html += '</div>';
-    }
-
-    // Best practices section
-    if (analysis.analysis.bestPractices && analysis.analysis.bestPractices.length > 0) {
-      html += '<div class="validation-section best-practices">';
-      html += '<h4>✨ Best Practices:</h4>';
-      analysis.analysis.bestPractices.forEach(practice => {
-        html += `<div class="validation-item best-practice">${practice}</div>`;
-      });
-      html += '</div>';
-    }
-
-    // If no issues found
-    if ((!analysis.analysis.errors || analysis.analysis.errors.length === 0) &&
-        (!analysis.analysis.warnings || analysis.analysis.warnings.length === 0) &&
-        (!analysis.analysis.suggestions || analysis.analysis.suggestions.length === 0) &&
-        (!analysis.analysis.bestPractices || analysis.analysis.bestPractices.length === 0)) {
-      html += '<div class="validation-success">✅ Your code looks good! No major issues detected.</div>';
-    }
+    // Main explanation content
+    html += '<div class="explanation-content">';
+    html += `<div class="explanation-text">${this.formatResponse(explanation.explanation)}</div>`;
+    html += '</div>';
 
     html += '</div>';
     this.validationResults.innerHTML = html;
@@ -185,8 +143,29 @@ class AIValidatorOnly {
     this.validationResults.innerHTML = html;
   }
 
-  showValidationResult(message, type = 'info') {
-    this.validationResults.innerHTML = `<div class="validation-${type}">${message}</div>`;
+  showExplanationResult(message, type = 'info') {
+    this.validationResults.innerHTML = `<div class="explanation-${type}">${message}</div>`;
+  }
+
+  formatResponse(text) {
+    // Convert markdown-style code blocks to HTML
+    text = text.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+      return `<pre><code class="language-${lang || 'text'}">${this.escapeHtml(code.trim())}</code></pre>`;
+    });
+
+    // Convert inline code
+    text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+    // Convert line breaks to <br>
+    text = text.replace(/\n/g, '<br>');
+
+    return text;
+  }
+
+  escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
   }
 
   switchLanguage(language) {
